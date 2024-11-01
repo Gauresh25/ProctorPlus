@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',# Add your apps from here
     'hello',  
+    'authentication',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +60,8 @@ ROOT_URLCONF = 'ProctorPlus.urls'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite dev server
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
     {

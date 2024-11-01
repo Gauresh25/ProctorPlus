@@ -1,82 +1,48 @@
-// src/App.jsx
-import { useState, useEffect } from 'react'
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ClerkProvider } from "@clerk/clerk-react";
+import AuthenticationPage from './pages/AuthenticationPage';  
 
-function App() {
-  const [message, setMessage] = useState('')
-  const [greetings, setGreetings] = useState([])
-  const [newGreeting, setNewGreeting] = useState('')
-
-  // Fetch Hello World message
-  useEffect(() => {
-    fetch('http://localhost:8000/api/hello/')
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-  }, [])
-
-  // Fetch all greetings
-  const loadGreetings = () => {
-    fetch('http://localhost:8000/api/greetings/')
-      .then(res => res.json())
-      .then(data => setGreetings(data))
-  }
-
-  useEffect(() => {
-    loadGreetings()
-  }, [])
-
-  // Add new greeting
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    fetch('http://localhost:8000/api/greetings/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message: newGreeting })
-    })
-      .then(res => res.json())
-      .then(() => {
-        setNewGreeting('')  // Clear input
-        loadGreetings()     // Reload greetings
-      })
+const App = () => {
+  const clerkPubKey =  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+  
+  if (!clerkPubKey) {
+    throw new Error("Missing Clerk Publishable Key");
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-3xl font-bold mb-4">{message}</h1>
-
-      <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4">Add New Greeting</h2>
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <input
-            type="text"
-            value={newGreeting}
-            onChange={(e) => setNewGreeting(e.target.value)}
-            className="border p-2 rounded"
-            placeholder="Enter your greeting"
-          />
-          <button 
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Add
-          </button>
-        </form>
+    <ClerkProvider publishableKey={clerkPubKey}>
+      <div className="min-h-screen bg-gray-50">
+        <BrowserRouter>
+          <Routes>
+            {/* Home Route */}
+            <Route path="/" element={
+              <div className="min-h-screen flex flex-col items-center justify-center">
+                <h1 className="text-3xl font-bold mb-4">Welcome to Exam Portal</h1>
+                <a 
+                  href="/auth" 
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                >
+                  Login / Register
+                </a>
+              </div>
+            } />
+            
+            {/* Authentication Route */}
+            <Route path="/auth" element={<AuthenticationPage />} />
+            
+            {/* Dashboard Route thoda dummy page banaya*/}
+            <Route path="/dashboard" element={
+              <div className="min-h-screen flex flex-col items-center justify-center">
+                <h1 className="text-2xl font-bold">Welcome to Dashboard!</h1>
+                <p className="mt-2">You're successfully logged in.</p>
+              </div>
+            } />
+          </Routes>
+        </BrowserRouter>
       </div>
+    </ClerkProvider>
+  );
+};
 
-      <div>
-        <h2 className="text-xl font-bold mb-4">All Greetings</h2>
-        {greetings.map(greeting => (
-          <div 
-            key={greeting.id}
-            className="border p-4 mb-2 rounded"
-          >
-            {greeting.message}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-export default App
+export default App;
