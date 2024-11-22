@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    #clerk ka mdlware
+    'authentication.middleware.clerk_middleware.ClerkAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'ProctorPlus.urls'
@@ -60,7 +64,17 @@ ROOT_URLCONF = 'ProctorPlus.urls'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite dev server
 ]
-
+CORS_ALLOWED_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',  # Important for Clerk token
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
@@ -84,11 +98,33 @@ WSGI_APPLICATION = 'ProctorPlus.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# pehele ka deafult sqllite3
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+load_dotenv()
+print("Database settings:")
+print(f"NAME: {os.getenv('DB_NAME')}")
+print(f"USER: {os.getenv('DB_USER')}")
+print(f"PASSWORD: {os.getenv('DB_PASSWORD')}")
+print(f"HOST: {os.getenv('DB_HOST')}")
+print(f"PORT: {os.getenv('DB_PORT')}")
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        'OPTIONS': {
+            'connect_timeout': 5,
+        }
     }
 }
 
@@ -133,3 +169,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+AUTH_USER_MODEL = 'authentication.ClerkUser'
+CLERK_SECRET_KEY =  os.getenv('CLERK_SECRET_KEY')
