@@ -8,7 +8,6 @@ class ClerkAuthMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Skip authentication for certain paths
         if request.path.startswith('/admin/') or request.path.startswith('/api/public/'):
             return self.get_response(request)
 
@@ -21,27 +20,39 @@ class ClerkAuthMiddleware:
             # Verify and decode the JWT token
             decoded_token = jwt.decode(
                 token,
-                settings.CLERK_SECRET_KEY,
-                algorithms=['HS256'],
+                settings.CLERK_JWT_PUBLIC_KEY,  # Changed from CLERK_SECRET_KEY
+                algorithms=['RS256'],           # Changed from HS256
                 options={'verify_aud': False}
             )
             
-            # Get or create user
+            # Extract user data from Clerk's token structure
+            user_data = {
+                'clerk_user_id': decoded_token['sub'],
+                'email': decoded_token.get('email', ''),
+                'username': decoded_token.get('email', '').split('@')[0],  # Fallback username
+                'email_verified': decoded_token.get('email_verified', False)
+            }
+            
+            # Get or create user with all fields
             User = get_user_model()
-            user, created = User.objects.get_or_create(
-                clerk_user_id=decoded_token['sub'],
+            user, created = User.objects.update_or_create(
+                clerk_user_id=user_data['clerk_user_id'],
                 defaults={
-                    'username': decoded_token.get('username', ''),
-                    'email': decoded_token.get('email', ''),
-                    'email_verified': decoded_token.get('email_verified', False)
+                    'username': user_data['username'],
+                    'email': user_data['email'],
+                    'email_verified': user_data['email_verified'],
                 }
             )
             
+            # Important: Set authentication status
+            user.is_authenticated = True
             request.user = user
             
-        except jwt.InvalidTokenError:
+        except jwt.InvalidTokenError as e:
+            print(f"Token validation error: {str(e)}")  # Add logging
             return JsonResponse({'error': 'Invalid token'}, status=401)
         except Exception as e:
+            print(f"Unexpected error: {str(e)}")  # Add logging
             return JsonResponse({'error': str(e)}, status=500)
 
         return self.get_response(request)

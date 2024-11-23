@@ -1,11 +1,20 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class ClerkUser(AbstractUser):
-    clerk_user_id = models.CharField(max_length=255, unique=True)
-    email_verified = models.BooleanField(default=False)
-    profile_image_url = models.URLField(max_length=500, blank=True, null=True)
-    last_sign_in = models.DateTimeField(null=True, blank=True)
+class User(AbstractUser):
+    """
+    Custom user model that extends Django's AbstractUser
+    """
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
+    class Meta:
+        db_table = 'authentication_user'  # Changed from auth_user
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+        
     def __str__(self):
-        return f"{self.username} ({self.clerk_user_id})"
+        return self.email

@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',# Add your apps from here
     'hello',  
-    'authentication',
-    'phonenumber_field',
+    #'authentication',   
+    'authentication.apps.AuthenticationConfig',  #
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -55,8 +56,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    #clerk ka mdlware
-    'authentication.middleware.clerk_middleware.ClerkAuthMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 ROOT_URLCONF = 'ProctorPlus.urls'
@@ -75,6 +78,16 @@ CORS_ALLOWED_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+CORS_ALLOWED_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
+]
+
 CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
@@ -171,5 +184,35 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-AUTH_USER_MODEL = 'authentication.ClerkUser'
+AUTH_USER_MODEL = 'authentication.User'
 CLERK_SECRET_KEY =  os.getenv('CLERK_SECRET_KEY')
+CLERK_JWT_PUBLIC_KEY =  os.getenv('CLERK_JWT_PUBLIC_KEY')
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+# JWT settings
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'authentication': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
