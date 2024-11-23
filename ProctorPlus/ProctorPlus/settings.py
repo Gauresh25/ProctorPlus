@@ -59,8 +59,12 @@ MIDDLEWARE = [
 ]
 
 AUTHENTICATION_BACKENDS = [
+    'authentication.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+LOGIN_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/admin/'
+LOGOUT_REDIRECT_URL = '/admin/login/'
 
 ROOT_URLCONF = 'ProctorPlus.urls'
 

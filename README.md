@@ -3,6 +3,7 @@
 A web application built with Django REST Framework and React+Vite.
 
 ## Project Structure
+
 ```
 project/
 ├── frontend/           # React + Vite frontend
@@ -16,6 +17,7 @@ project/
 ```
 
 ## Prerequisites
+
 - Python 3.8+
 - Node.js 14+
 - npm or yarn
@@ -23,6 +25,7 @@ project/
 ## Backend Setup
 
 1. Create and activate virtual environment:
+
 ```bash
 cd ProctorPlus
 python -m venv venv
@@ -33,20 +36,24 @@ source venv/bin/activate
 ```
 
 2. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 3. Set up environment variables:
+
    - Add env variables to `.env` for both frontend and/or backend
    - Update the values if needed
 
 4. Run migrations:
+
 ```bash
 python manage.py migrate
 ```
 
 5. Start the development server:
+
 ```bash
 python manage.py runserver
 ```
@@ -54,16 +61,19 @@ python manage.py runserver
 ## Frontend Setup
 
 1. Install dependencies:
+
 ```bash
 cd frontend
 npm install
 ```
 
 2. Set up environment variables:
+
    - Add env variables to `.env` for both frontend and/or backend
    - Update the values if needed
 
 3. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -71,11 +81,13 @@ npm run dev
 ## Available Scripts
 
 Backend:
+
 - `python manage.py runserver` - Starts Django development server
 - `python manage.py migrate` - Run database migrations
 - `python manage.py createsuperuser` - Create admin user
 
 Frontend:
+
 - `npm run dev` - Starts Vite development server
 - `npm run build` - Builds the frontend for production
 - `npm run lint` - Runs ESLint
@@ -89,7 +101,7 @@ Frontend:
 
 ## Database
 
-The project uses SQLite by default. The database file is located at `ProctorPlus/db.sqlite3`.
+The project uses Postgres hosted on supabase
 
 ## Additional Documentation
 
