@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import AuthenticationPage from "./pages/AuthenticationPage";
+import TestPage from "./pages/TestPage";
 
 const App = () => {
   return (
@@ -35,6 +36,8 @@ const App = () => {
                 </div>
               }
             />
+
+            <Route path="/test" element={<TestPage />} />
           </Routes>
         </BrowserRouter>
       </div>
