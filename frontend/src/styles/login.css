@@ -1,0 +1,360 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "nunito";
+  font-weight: 500;
+}
+
+body {
+  font-family: "Nunito", sans-serif;
+  margin: 0;
+  /* background: url("/login-side.jpg") no-repeat center; */
+  background-size: cover;
+}
+
+.sign-in-container {
+  background: url("/login-side.jpg") no-repeat center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  font-weight: 900;
+}
+.sign-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 50%;
+  font-size: 16px;
+  height: 100vh;
+}
+
+.sign-in-title {
+  opacity: 0;
+  font-weight: 700;
+  font-size: 30px;
+  margin-top: 50px;
+}
+.s2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  overflow: auto;
+  background: #ffffff;
+  height: 97%;
+  width: 750px;
+  box-shadow: 0 0 25px #00000061;
+  border-radius: 8px;
+}
+.sign-in-title-alt {
+  color: #000;
+  padding: 10px 0;
+}
+.sign-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 25px 0;
+}
+.login-w-button {
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  gap: 10px;
+  border: 1px solid #3676ff;
+  background: #fff;
+  padding: 10px;
+  height: 40px;
+  width: 200px;
+  border-radius: 2vw;
+  color: #222222;
+  transition: 0.3s ease all;
+  font-size: 14px;
+  box-shadow: 0 0 15px #00000020;
+}
+.login-w-button:hover {
+  background: #eef4ff;
+  border: 1px solid #a3c1f5;
+  box-shadow: 0 0 5px #00000020;
+  border-radius: 0.8vw;
+  scale: 1.03;
+}
+.slice-text-c {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0;
+}
+.slice-text {
+  color: #000;
+  background: #fff;
+  padding: 10px;
+}
+
+.slice-text:hover {
+  width: 10vw;
+  border: 1px solid #eee;
+  border-radius: 1vw;
+}
+
+.slicer {
+  position: absolute;
+  height: 1px;
+  background: #e5e5e5;
+  width: 500px;
+  z-index: -1;
+}
+.input-container {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  gap: 20px;
+  flex-direction: column;
+  width: 400px;
+}
+.input-container input,
+.input-container select,
+.input-container button {
+  padding: 7px;
+  height: 40px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid #3676ff;
+  box-shadow: 0 0 15px #00000020;
+  transition: 0.3s ease all;
+}
+.input-container input:focus,
+.input-container select:focus {
+  border: 1px solid #3676ff;
+  background: #eff5ff;
+}
+.input-container button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3676ff;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s ease all;
+}
+.input-container button:hover {
+  box-shadow: 0 0 5px #00000020;
+}
+
+.alt-f-full {
+  color: #000;
+  font-size: 14px;
+}
+.alt-f {
+  color: #3676ff;
+  font-size: 15px;
+  text-decoration: none;
+}
+.footer-s {
+  position: absolute;
+  bottom: 30px;
+  display: flex;
+  gap: 10px;
+}
+.footer-s a {
+  color: #fff;
+}
+.sign-column:nth-child(2) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+}
+input::placeholder {
+  color: #000;
+}
+
+.intro-p {
+  color: #252525;
+
+  max-width: 750px;
+}
+
+.intro-img {
+  height: 500px;
+}
+.intro-img img {
+  max-width: 600px;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+.canvas-logo {
+  background: #fff;
+  border-radius: 8px;
+  width: 350px;
+  box-shadow: 0 0 25px #00000061;
+  margin: 10px auto;
+}
+.canvas-logo img {
+  width: 100%;
+}
+.intro-title {
+  opacity: 0;
+  border-radius: 0.5vw;
+  font-weight: 700;
+  font-size: 2vw;
+  padding: 10px 0;
+  color: #fff;
+  transition: all 0.2s ease-out;
+}
+
+.intro-title:hover {
+  background-color: #ffffff69;
+  color: #2a2a2a;
+  border-radius: 1vw;
+}
+
+.intro-title-alt {
+  color: #353535;
+  font-size: 16px;
+}
+.alt-f-full-ch {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 5px;
+
+  color: #000;
+}
+.alt-f-full-ch input {
+  box-shadow: 0 0 0;
+}
+
+.dietaryRestrictions {
+  background-color: transparent;
+}
+
+@media only screen and (max-width: 1100px) {
+  body {
+    background: #fff;
+  }
+
+  .s2 {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    padding: 0px;
+    padding: 10px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+
+    background: #ffffff;
+    height: auto;
+    width: 100%;
+    box-shadow: 0 0 0px #00000061;
+    border-radius: 0px;
+  }
+
+  .sign-column:nth-child(2) {
+    display: none;
+  }
+
+  .sign-column:nth-child(1) {
+    width: 100% !important;
+    height: auto;
+  }
+
+  .slicer {
+    width: 0px !important;
+  }
+
+  .login-w-button {
+    width: 100%;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .input-container {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    gap: 20px;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+@media only screen and (max-height: 500px) {
+  body {
+    background: #fff;
+  }
+  .s2 {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    padding: 0px;
+    padding: 10px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+
+    background: #ffffff;
+    height: auto;
+    width: 100%;
+    box-shadow: 0 0 0px #00000061;
+    border-radius: 0px;
+  }
+  .sign-column:nth-child(2) {
+    display: none;
+  }
+  .sign-column:nth-child(1) {
+    width: 100% !important;
+    height: auto;
+  }
+  .slicer {
+    width: 0px !important;
+  }
+  .login-w-button {
+    width: 100%;
+  }
+  .input-container {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    gap: 20px;
+    flex-direction: column;
+    width: 100%;
+  }
+  .input-container input,
+  .input-container select {
+    padding: 7px;
+    height: 40px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #3676ff;
+    box-shadow: 0 0 15px #00000020;
+    transition: 0.3s ease all;
+  }
+
+  .input-container input:focus,
+  .input-container select:focus {
+    border: 1px solid #3676ff;
+    background: #eff5ff;
+  }
+}
