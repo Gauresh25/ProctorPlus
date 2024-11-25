@@ -1,8 +1,14 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+// import AuthenticationPage from "./pages/AuthenticationPage";
+import Authenticationpage from "./Components/login";
 import AuthenticationPage from "./pages/AuthenticationPage";
-
+import PhoneDetectionWithDrag from "./Components/faceapi";
+// import FaceDetection from "./Components/faceapi";
+// import PhoneDetection from "./Components/faceapi";
+// import EyeTracking from "./Components/faceapi";
+// import EyeMovementTracker from "./Components/faceapi";
 const App = () => {
   return (
     <AuthProvider>
@@ -26,6 +32,7 @@ const App = () => {
               }
             />
             <Route path="/auth" element={<AuthenticationPage />} />
+            <Route path="/face" element={<PhoneDetectionWithDrag />} />
             <Route
               path="/dashboard"
               element={

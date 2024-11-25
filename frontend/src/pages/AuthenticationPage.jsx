@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import gsap from "gsap";
 import { useAuth } from "../context/AuthContext";
-
-const AuthenticationPage = () => {
+import "../styles/login.css";
+import Login from "../Components/login";
+const Authenticationpage = () => {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { setUser, loading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: "",
@@ -12,7 +14,16 @@ const AuthenticationPage = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  useEffect(() => {
+    const t = gsap.timeline();
 
+    t.to(".intro-title", {
+      y: -10,
+      opacity: 1,
+      duration: 0.5,
+      scale: 1.05,
+    });
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -44,113 +55,24 @@ const AuthenticationPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-12">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {isLogin ? "Welcome back" : "Create account"}
-          </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            {isLogin
-              ? "Sign in to access your account"
-              : "Sign up to get started"}
-          </p>
+    <div className="sign-in-container">
+      <div className="sign-column s1">
+        <div className="sign-column-face s2">
+          <Login />
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-            />
+      <div className="sign-column w2">
+        <div className="intro-p">
+          <div className="canvas-logo"></div>
+
+          <div className="intro-content">
+            <div className="intro-title">Welcome To Proctor Plus</div>
           </div>
-
-          {!isLogin && (
-            <div>
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Phone Number
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                required
-                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                  focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                placeholder="Enter your phone number"
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
-              />
-            </div>
-          )}
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              required
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            {isLogin ? "Sign In" : "Sign Up"}
-          </button>
-
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-blue-600 hover:text-blue-500"
-            >
-              {isLogin
-                ? "Don't have an account? Sign up"
-                : "Already have an account? Sign in"}
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
 
-export default AuthenticationPage;
+export default Authenticationpage;
