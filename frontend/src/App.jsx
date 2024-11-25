@@ -4,11 +4,16 @@ import { AuthProvider } from "./context/AuthContext";
 // import AuthenticationPage from "./pages/AuthenticationPage";
 import Authenticationpage from "./Components/login";
 import AuthenticationPage from "./pages/AuthenticationPage";
+
 import PhoneDetectionWithDrag from "./Components/faceapi";
 // import FaceDetection from "./Components/faceapi";
 // import PhoneDetection from "./Components/faceapi";
 // import EyeTracking from "./Components/faceapi";
 // import EyeMovementTracker from "./Components/faceapi";
+
+import TestPage from "./pages/TestPage";
+
+
 const App = () => {
   return (
     <AuthProvider>
@@ -42,6 +47,8 @@ const App = () => {
                 </div>
               }
             />
+
+            <Route path="/test" element={<TestPage />} />
           </Routes>
         </BrowserRouter>
       </div>
