@@ -1,8 +1,8 @@
-# Exam Submission Data Structure Documentation
+# Exam Submission & Evaluation Documentation
 
 ## Overview
 
-Documentation for the ProctorPlus exam submission data structure, including MCQs, descriptive answers, domain-specific challenges, and security analytics.
+Documentation for the ProctorPlus exam submission and evaluation system, including data structures, API endpoints, and evaluation criteria.
 
 ## Data Structure
 
@@ -67,74 +67,183 @@ Documentation for the ProctorPlus exam submission data structure, including MCQs
 }
 ```
 
-## Sample Submission
+## Evaluation System
 
-```javascript
+### Architecture
+
+The evaluation system follows a Service Layer pattern, separating business logic from HTTP handling:
+
+- `ExamEvaluationService`: Core evaluation logic
+- `views.py`: API endpoints
+- `models.py`: Data persistence
+- `services.py`: Business logic
+
+### Scoring Breakdown
+
+Total score: 100 points
+
+1. MCQ Section (60 points)
+
+   - 12 questions × 5 points each
+   - Binary scoring (correct/incorrect)
+
+2. Descriptive Section (30 points)
+
+   - 2 questions × 15 points each
+   - Evaluated on:
+     - Length (5 points)
+     - Keyword usage (10 points)
+     - Content relevance
+
+3. Domain-Specific Section (30 points)
+   - Coding:
+     - Code structure (10 points)
+     - Implementation (10 points)
+     - Documentation (10 points)
+   - Design:
+     - UX principles (7.5 points × 4 criteria)
+   - Marketing:
+     - Strategy components (7.5 points × 4 criteria)
+
+### Evaluation Criteria
+
+#### MCQ Evaluation
+
+- Direct comparison with correct answers
+- No partial credit
+- Automated scoring
+
+#### Descriptive Evaluation
+
+- Minimum word count: 50 words
+- Keyword matching from predefined sets
+- 2 points per matched keyword (max 10 points)
+- Length-based scoring (5 points if meets minimum)
+
+#### Domain-Specific Evaluation
+
+1. Coding Submissions:
+
+   ```python
+   Criteria:
+   - Code length (min 5 lines)
+   - Function structure
+   - Return statements
+   - Documentation/comments
+   - Error handling
+   ```
+
+2. Design Submissions:
+
+   ```python
+   Keywords:
+   - Layout
+   - User experience
+   - Responsive design
+   - Accessibility
+   ```
+
+3. Marketing Submissions:
+   ```python
+   Keywords:
+   - Target audience
+   - Strategy
+   - ROI metrics
+   - Engagement
+   ```
+
+### Behavior Analysis
+
+- Bot detection threshold: 0.7 confidence
+- Automatic failure if suspicious behavior detected
+- Factors considered:
+  - Typing patterns
+  - Response timing
+  - Error correction rates
+
+### API Endpoints
+
+```http
+# Submit Exam
+POST /api/exam/submit/
+Content-Type: application/json
+Authorization: Bearer <token>
+
+# Get Evaluation
+GET /api/exam/evaluate/{submission_id}/
+Authorization: Bearer <token>
+
+# Response Format
 {
-  userId: "student@example.com",
-  domain: "coding",
-  answers: {
-    mcqs: [
-      { questionId: "coding-mcq-0", answer: "Option A", type: "mcq" },
-      // ... more MCQs
-    ],
-    descriptive: [
-      {
-        questionId: "coding-desc-1",
-        answer: "Time complexity refers to...",
-        type: "descriptive"
-      }
-    ],
-    domainSpecific: {
-      dsaAnswer: {
-        code: "function binarySearch(arr, target) {...}",
-        language: "javascript",
-        questionId: "coding-dsa-1"
-      }
+    "status": "success",
+    "data": {
+        "score": number,        // 0-100
+        "status": string,       // "passed" | "failed"
+        "breakdown": {
+            "mcq_score": number,
+            "descriptive_score": number,
+            "domain_score": number
+        },
+        "feedback": string[]    // Detailed feedback points
     }
-  },
-  behaviorAnalysis: {
-    isLikelyBot: false,
-    confidence: 0.1,
-    reasons: [],
-    keyTiming: [120, 150, 180],
-    specialKeyCount: 3,
-    typingSpeed: [45, 50, 48],
-    backspaceCount: 5,
-    totalKeyPresses: 234
-  }
 }
 ```
 
-## File Upload Handling
+### Passing Criteria
 
-- Design files (images) and marketing files (videos) are sent via FormData
-- File paths will be stored in the database after server-side processing
-- Files are validated for type and size before upload
+- Minimum passing score: 60%
+- No suspicious behavior detected
+- All sections attempted
+
+### Error Handling
+
+- Invalid submissions return 400
+- Unauthorized access returns 401
+- Not found returns 404
+- Server errors return 500
+- Detailed error messages in response
 
 ## Security Notes
 
-- Keystroke analytics collected during descriptive answers and coding
-- Behavior analysis helps detect automated submissions
-- Files scanned for malware before storage
-- All submissions require valid JWT token
+- JWT authentication required
+- Behavior analysis enforced
+- Rate limiting applied
+- User-specific access control
 
-## Database Considerations
+## Database Schema
 
-- Consider storing large text fields (code, descriptions) with TEXT type
-- File paths stored as strings, actual files in file system
-- Behavior analysis can be stored as JSONB for flexibility
-- Timestamps added automatically for submission tracking
+```sql
+ExamSubmission
+- id (PK)
+- user_id (FK)
+- domain
+- created_at
+- updated_at
 
-## API Endpoints
+MCQAnswer
+- submission_id (FK)
+- question_id
+- answer
 
+DescriptiveAnswer
+- submission_id (FK)
+- question_id
+- answer
+
+DomainSpecificAnswer
+- submission_id (FK)
+- code/description
+- file_url
+- question_id
+
+BehaviorAnalysis
+- submission_id (FK)
+- metrics...
 ```
-POST /api/exam/submit
-Content-Type: multipart/form-data
-Authorization: Bearer <token>
 
-FormData:
-- examData: JSON string of the submission data
-- designFile?: File (image)
-- videoFile?: File (video)
-```
+## Development Notes
+
+- Built with Django + DRF
+- PostgreSQL database
+- JWT authentication
+- Service Layer pattern

@@ -142,7 +142,7 @@ const ExamInterface = () => {
     console.log("Submission data:", examData);
 
     try {
-      const response = await fetch("http://localhost:8000/api/exam/submit", {
+      const response = await fetch("http://localhost:8000/api/exam/submit/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
