@@ -69,98 +69,6 @@ Documentation for the ProctorPlus exam submission and evaluation system, includi
 
 ## Evaluation System
 
-### Architecture
-
-The evaluation system follows a Service Layer pattern, separating business logic from HTTP handling:
-
-- `ExamEvaluationService`: Core evaluation logic
-- `views.py`: API endpoints
-- `models.py`: Data persistence
-- `services.py`: Business logic
-
-### Scoring Breakdown
-
-Total score: 100 points
-
-1. MCQ Section (60 points)
-
-   - 12 questions × 5 points each
-   - Binary scoring (correct/incorrect)
-
-2. Descriptive Section (30 points)
-
-   - 2 questions × 15 points each
-   - Evaluated on:
-     - Length (5 points)
-     - Keyword usage (10 points)
-     - Content relevance
-
-3. Domain-Specific Section (30 points)
-   - Coding:
-     - Code structure (10 points)
-     - Implementation (10 points)
-     - Documentation (10 points)
-   - Design:
-     - UX principles (7.5 points × 4 criteria)
-   - Marketing:
-     - Strategy components (7.5 points × 4 criteria)
-
-### Evaluation Criteria
-
-#### MCQ Evaluation
-
-- Direct comparison with correct answers
-- No partial credit
-- Automated scoring
-
-#### Descriptive Evaluation
-
-- Minimum word count: 50 words
-- Keyword matching from predefined sets
-- 2 points per matched keyword (max 10 points)
-- Length-based scoring (5 points if meets minimum)
-
-#### Domain-Specific Evaluation
-
-1. Coding Submissions:
-
-   ```python
-   Criteria:
-   - Code length (min 5 lines)
-   - Function structure
-   - Return statements
-   - Documentation/comments
-   - Error handling
-   ```
-
-2. Design Submissions:
-
-   ```python
-   Keywords:
-   - Layout
-   - User experience
-   - Responsive design
-   - Accessibility
-   ```
-
-3. Marketing Submissions:
-   ```python
-   Keywords:
-   - Target audience
-   - Strategy
-   - ROI metrics
-   - Engagement
-   ```
-
-### Behavior Analysis
-
-- Bot detection threshold: 0.7 confidence
-- Automatic failure if suspicious behavior detected
-- Factors considered:
-  - Typing patterns
-  - Response timing
-  - Error correction rates
-
 ### API Endpoints
 
 ```http
@@ -172,6 +80,10 @@ Authorization: Bearer <token>
 # Get Evaluation
 GET /api/exam/evaluate/{submission_id}/
 Authorization: Bearer <token>
+
+# payload is like tese
+Key: examData
+Value: {"domain":"design","answers":{"mcqs":[],"descriptive":[...],"domainSpecific":{}},"behaviorAnalysis":{...}}
 
 # Response Format
 {
