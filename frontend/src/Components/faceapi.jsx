@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
-import { load as cocoSSDLoad } from "@tensorflow-models/coco-ssd";
 var count = 0;
-
+var nonecount = 0;
+var multiplecount = 0;
 const FaceYawDetection = () => {
   const videoRef = useRef(null);
   let yawInterval = null;
   let phoneDetectionInterval = null;
-  const [model, setModel] = useState(null);
-  const startPhoneDetection = async (model) => {};
+  const [sus, setsus] = useState("");
   useEffect(() => {
     // Load models for face-api.js
     const loadModels = async () => {
@@ -16,17 +15,6 @@ const FaceYawDetection = () => {
       await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
       await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
     };
-
-    // Load COCO-SSD model using TensorFlow.js
-    // const loadPhoneDetectionModel = async () => {
-    //   try {
-    //     const model = await cocoSSDLoad();
-    //     console.log("model loaded")
-    //     startPhoneDetection(model);
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // };
 
     const startVideo = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -42,16 +30,17 @@ const FaceYawDetection = () => {
       const options = new faceapi.TinyFaceDetectorOptions();
       yawInterval = setInterval(async () => {
         const detections = await faceapi
-          .detectSingleFace(videoRef.current, options)
+          .detectAllFaces(videoRef.current, options)
           .withFaceLandmarks();
-        if (detections) {
-          const landmarks = detections.landmarks;
+        if (detections && detections.length == 1) {
+          const landmarks = detections[0].landmarks;
 
           // Get key points for yaw detection
           const leftEye = landmarks.getLeftEye();
           const rightEye = landmarks.getRightEye();
           const nose = landmarks.getNose();
-
+          multiplecount = 0;
+          nonecount = 0;
           // Calculate yaw using horizontal positions
           const noseX = nose[3].x; // Tip of the nose
           const leftEyeX = leftEye[0].x;
@@ -73,17 +62,27 @@ const FaceYawDetection = () => {
           } else {
             count = 0;
           }
-          console.log(count);
-          if (count > 10) {
+          if (count > 3) {
+            setsus("looking here and there");
             alert("looking here and there");
           }
+          console.log(count);
           console.log(`Yaw Direction: ${yawDirection}`);
+        } else if (detections.length > 1) {
+          multiplecount++;
+          if (multiplecount > 4) {
+            alert("multiple found");
+          }
+        } else {
+          nonecount++;
+          if (nonecount > 4) {
+            alert("none found");
+          }
         }
       }, 1000);
     };
 
     loadModels();
-    // loadPhoneDetectionModel();
     startVideo();
 
     // Cleanup function to clear intervals and stop video stream
@@ -99,9 +98,6 @@ const FaceYawDetection = () => {
       }
     };
   }, []);
-  useEffect(() => {
-    startPhoneDetection(model);
-  }, [model]);
   return (
     <div>
       <video
