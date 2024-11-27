@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { useAuth } from "../context/AuthContext";
+
 const Login = () => {
   const navigate = useNavigate();
   const { setUser, loading } = useAuth();
@@ -12,41 +13,54 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
+
   useEffect(() => {
     const t = gsap.timeline();
-
     t.to(".sign-in-title", {
       x: 10,
       opacity: 1,
       duration: 1,
     });
   }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
+    // Only include phone if registering
+    const submitData = isLogin
+      ? { email: formData.email, password: formData.password }
+      : formData;
+
     try {
       const response = await fetch(
-        `http://localhost:8000/api/auth/${isLogin ? "login" : "register"}`,
+        `http://localhost:8000/api/auth/${isLogin ? "register" : "login"}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(submitData),
         }
       );
 
-      const data = await response.json();
+      const responseData = await response.json();
+      console.log("Server response:", responseData);
 
       if (!response.ok) {
-        throw new Error(data.error || "Authentication failed");
+        throw new Error(responseData.message || "Authentication failed");
       }
 
-      localStorage.setItem("authToken", data.token);
-      setUser(data.user);
-      navigate("/dashboard");
+      // Check the nested structure based on your views.py
+      if (responseData.data && responseData.data.token) {
+        localStorage.setItem("authToken", responseData.data.token);
+        setUser(responseData.data.user);
+        navigate("/exam");
+      } else {
+        throw new Error("Invalid server response format");
+      }
     } catch (err) {
+      console.error("Auth error:", err);
       setError(err.message);
     }
   };
@@ -87,17 +101,17 @@ const Login = () => {
           type="email"
           value={formData.email}
           required
-          placeholder="email"
+          placeholder="Email"
           onChange={(e) => {
             setFormData({ ...formData, email: e.target.value });
           }}
         />
         {isLogin && (
           <input
-            type="phone"
+            type="tel"
             value={formData.phone}
             required
-            placeholder="Enter your phone number"
+            placeholder="Phone Number"
             onChange={(e) => {
               setFormData({ ...formData, phone: e.target.value });
             }}
@@ -106,7 +120,7 @@ const Login = () => {
         <input
           type="password"
           required
-          placeholder="Passowrd"
+          placeholder="Password"
           value={formData.password}
           onChange={(e) =>
             setFormData({ ...formData, password: e.target.value })
@@ -115,21 +129,22 @@ const Login = () => {
         <a href="#" className="alt-f">
           Forgot Password ?
         </a>
-        {loading ? (
-          <button className="hover:rounded-[2vw] rounded-[1vw]">Sign in</button>
-        ) : (
-          <button className="hover:rounded-[2vw] rounded-[1vw]">Sign in</button>
-        )}
-        <div href="#" className="alt-f-full">
-        {!isLogin?"Not a Member":"Already a Member"}
+        <button
+          type="submit"
+          className="hover:rounded-[2vw] rounded-[1vw]"
+          disabled={loading}
+        >
+          {loading ? "Please wait..." : isLogin ? "Sign Up" : "Sign In"}
+        </button>
+        {error && <div className="text-red-500 mt-2">{error}</div>}
+        <div className="alt-f-full">
+          {!isLogin ? "Not a Member" : "Already a Member"}
           <button
-            className="p-[.2vw] hover:rounded-[2vw]  transition-all w-full duration-1 ease-out border-blue-300 hover:border-b alt-f ml-[0.2vw]"
-            onClick={() => {
-              // setLogin(false);
-              setIsLogin((prev) => !prev);
-            }}
+            type="button"
+            className="p-[.2vw] hover:rounded-[2vw] transition-all w-full duration-1 ease-out border-blue-300 hover:border-b alt-f ml-[0.2vw]"
+            onClick={() => setIsLogin(!isLogin)}
           >
-            {!isLogin?"Sing Up":"Sign In"}
+            {!isLogin ? "Sign Up" : "Sign In"}
           </button>
         </div>
       </form>

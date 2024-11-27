@@ -4,6 +4,8 @@ import { AuthProvider } from "./context/AuthContext";
 import AuthenticationPage from "./pages/AuthenticationPage";
 import PhoneDetectionWithDrag from "./Components/faceapi";
 import Dashoard from "./pages/Dashoard";
+import ExamInterface from "./pages/ExamInterface";
+import TestPage from "./pages/TestPage";
 const App = () => {
   return (
     <AuthProvider>
@@ -29,6 +31,9 @@ const App = () => {
             <Route path="/auth" element={<AuthenticationPage />} />
             <Route path="/face" element={<PhoneDetectionWithDrag />} />
             <Route path="/dashboard/*" element={<Dashoard />} />
+            <Route path="/test" element={<TestPage />} />
+
+            <Route path="/exam/:id" element={<ExamInterface />} />
           </Routes>
         </BrowserRouter>
       </div>

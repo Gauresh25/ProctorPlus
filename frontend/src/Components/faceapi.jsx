@@ -1,13 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
+import Draggable from "react-draggable";
+
 var count = 0;
 var nonecount = 0;
 var multiplecount = 0;
+
 const FaceYawDetection = () => {
   const videoRef = useRef(null);
-  let yawInterval = null;
-  let phoneDetectionInterval = null;
-  const [sus, setsus] = useState("");
+  let yawInterval = useRef(null);
+  const [sus, setsus] = useState(false);
+
+  function stoptimeout() {
+    if (yawInterval.current) {
+      clearInterval(yawInterval.current); // Clear the interval
+      yawInterval.current = null;
+    }
+  }
+
+  function resumetimeout(detectYaw) {
+    if (!yawInterval.current) {
+      detectYaw(); // Restart the detection process
+    }
+  }
+
   useEffect(() => {
     // Load models for face-api.js
     const loadModels = async () => {
@@ -28,11 +44,11 @@ const FaceYawDetection = () => {
 
     const detectYaw = async () => {
       const options = new faceapi.TinyFaceDetectorOptions();
-      yawInterval = setInterval(async () => {
+      yawInterval.current = setInterval(async () => {
         const detections = await faceapi
           .detectAllFaces(videoRef.current, options)
           .withFaceLandmarks();
-        if (detections && detections.length == 1) {
+        if (detections && detections.length === 1) {
           const landmarks = detections[0].landmarks;
 
           // Get key points for yaw detection
@@ -41,6 +57,7 @@ const FaceYawDetection = () => {
           const nose = landmarks.getNose();
           multiplecount = 0;
           nonecount = 0;
+
           // Calculate yaw using horizontal positions
           const noseX = nose[3].x; // Tip of the nose
           const leftEyeX = leftEye[0].x;
@@ -63,20 +80,31 @@ const FaceYawDetection = () => {
             count = 0;
           }
           if (count > 3) {
-            setsus("looking here and there");
-            alert("looking here and there");
+            stoptimeout();
+            alert("Looking here and there, please be on camera!");
+            setsus(false);
+            resumetimeout(detectYaw); // Resume timeout after alert
           }
-          console.log(count);
           console.log(`Yaw Direction: ${yawDirection}`);
         } else if (detections.length > 1) {
           multiplecount++;
-          if (multiplecount > 4) {
-            alert("multiple found");
+          if (!sus && multiplecount > 4) {
+            stoptimeout();
+            setsus(true);
+            alert("Multiple faces detected!");
+            setsus(false);
+            multiplecount = 0;
+            resumetimeout(detectYaw); // Resume timeout after alert
           }
         } else {
           nonecount++;
-          if (nonecount > 4) {
-            alert("none found");
+          if (!sus && nonecount > 4) {
+            stoptimeout();
+            setsus(true);
+            alert("No face detected!");
+            setsus(false);
+            nonecount = 0;
+            resumetimeout(detectYaw); // Resume timeout after alert
           }
         }
       }, 1000);
@@ -87,26 +115,26 @@ const FaceYawDetection = () => {
 
     // Cleanup function to clear intervals and stop video stream
     return () => {
-      if (yawInterval) {
-        clearInterval(yawInterval);
-      }
-      if (phoneDetectionInterval) {
-        clearInterval(phoneDetectionInterval);
-      }
+      stoptimeout();
       if (videoRef.current && videoRef.current.srcObject) {
         videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
       }
     };
   }, []);
+
   return (
-    <div>
-      <video
-        ref={videoRef}
-        style={{
-          width: "640px",
-          height: "480px",
-        }}
-      />
+    <div className="absolute  right-0 bottom-0">
+      <Draggable>
+        <video
+          ref={videoRef}
+          style={{
+            width: "40vw",
+            height: "40vh",
+            borderRadius: 10,
+            cursor: "move",
+          }}
+        />
+      </Draggable>
     </div>
   );
 };

@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     #'authentication',   
     'authentication.apps.AuthenticationConfig',  #
     'rest_framework_simplejwt',
+
+    'submission',
 ]
 
 MIDDLEWARE = [
