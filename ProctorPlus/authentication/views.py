@@ -15,6 +15,7 @@ def register(request):
         email = request.data.get('email')
         phone = request.data.get('phone')
         password = request.data.get('password')
+        
         if not all([email, phone, password]):
             return Response({
                 'status': 'error',

@@ -15,7 +15,7 @@ class ExamSubmission(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     total_score = models.IntegerField(default=0, blank=True) #score
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.user.email}'s {self.domain} exam submission"
 
 class MCQAnswer(models.Model):
@@ -25,7 +25,7 @@ class MCQAnswer(models.Model):
 
     is_correct = models.BooleanField(default=False, blank=True) 
 
-    def _str_(self):
+    def __str__(self):
         return f"MCQ Answer for {self.question_id}"
 
 class DescriptiveAnswer(models.Model):
@@ -36,7 +36,7 @@ class DescriptiveAnswer(models.Model):
     score = models.IntegerField(default=0, blank=True)  # New field - out of 10
 
 
-    def _str_(self):
+    def __str__(self):
         return f"Descriptive Answer for {self.question_id}"
 
 class DomainSpecificAnswer(models.Model):
@@ -57,7 +57,7 @@ class DomainSpecificAnswer(models.Model):
     question_id = models.CharField(max_length=50)
     score = models.IntegerField(null=True, blank=True)  # Made nullable
 
-    def _str_(self):
+    def __str__(self):
         return f"Domain Specific Answer for {self.submission.domain}"
 
 class BehaviorAnalysis(models.Model):
@@ -71,5 +71,5 @@ class BehaviorAnalysis(models.Model):
     backspace_count = models.IntegerField()
     total_key_presses = models.IntegerField()
 
-    def _str_(self):
+    def __str__(self):
         return f"Behavior Analysis for {self.submission}"
