@@ -5,6 +5,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
+import base64
+from django.core.files.base import ContentFile
+import uuid
+
 
 User = get_user_model()
 
@@ -15,26 +19,36 @@ def register(request):
         email = request.data.get('email')
         phone = request.data.get('phone')
         password = request.data.get('password')
+        image_data = request.data.get('image')  # Base64 image data
         
-        if not all([email, phone, password]):
+        if not all([email, phone, password, image_data]):
             return Response({
                 'status': 'error',
-                'message': 'All fields are required'
+                'message': 'All fields including image are required'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Check if user already exists
         if User.objects.filter(email=email).exists():
             return Response({
                 'status': 'error',
                 'message': 'User with this email already exists'
             }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Process the base64 image
+        if image_data:
+            format, imgstr = image_data.split(';base64,')
+            ext = format.split('/')[-1]
+            filename = f"{uuid.uuid4()}.{ext}"
+            data = ContentFile(base64.b64decode(imgstr))
         
         user = User.objects.create_user(
-            username=email,  # Using email as username
+            username=email,
             email=email,
             phone=phone,
             password=password
         )
+        
+        if image_data:
+            user.profile_image.save(filename, data, save=True)
         
         refresh = RefreshToken.for_user(user)
         
@@ -45,16 +59,12 @@ def register(request):
                 'token': str(refresh.access_token),
                 'user': {
                     'email': user.email,
-                    'phone': user.phone
+                    'phone': user.phone,
+                    'profile_image': user.profile_image.url if user.profile_image else None
                 }
             }
         }, status=status.HTTP_201_CREATED)
         
-    except IntegrityError:
-        return Response({
-            'status': 'error',
-            'message': 'User with this email already exists'
-        }, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({
             'status': 'error',
@@ -106,7 +116,8 @@ def get_user(request):
         'data': {
             'user': {
                 'email': request.user.email,
-                'phone': request.user.phone
+                'phone': request.user.phone,
+                'profile_image': request.user.profile_image.url if request.user.profile_image else None
             }
         }
     })

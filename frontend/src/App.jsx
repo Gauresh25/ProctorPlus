@@ -2,11 +2,11 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 // import AuthenticationPage from "./pages/AuthenticationPage";
-import Authenticationpage from "./Components/login";
+import Authenticationpage from "./components/login";
 import AuthenticationPage from "./pages/AuthenticationPage";
 import ExamInterface from "./pages/ExamInterface";
 
-import PhoneDetectionWithDrag from "./Components/faceapi";
+import PhoneDetectionWithDrag from "./components/faceapi";
 // import FaceDetection from "./Components/faceapi";
 // import PhoneDetection from "./Components/faceapi";
 // import EyeTracking from "./Components/faceapi";
