@@ -11,7 +11,7 @@ function ExamInterface() {
     return () => {};
   }, []);
 
-  return <div>{auth ? <Faceauth  /> : <QuestionCard />}</div>;
+  return <div>{auth ? <Faceauth  /> : <QuestionCard  />}</div>;
 }
 
 export default ExamInterface;

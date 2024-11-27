@@ -34,6 +34,7 @@ const App = () => {
             <Route path="/test" element={<TestPage />} />
 
             <Route path="/exam/:id" element={<ExamInterface />} />
+            <Route path="/exam-complete" element={<></>} />
           </Routes>
         </BrowserRouter>
       </div>

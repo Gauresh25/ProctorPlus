@@ -68,7 +68,7 @@ const FaceYawDetection = () => {
           const rightDistance = Math.abs(noseX - rightEyeX);
 
           let yawDirection = "Looking Straight";
-          const THRESHOLD = 15;
+          const THRESHOLD = 20;
 
           if (rightDistance - leftDistance > THRESHOLD) {
             yawDirection = "Looking Left";

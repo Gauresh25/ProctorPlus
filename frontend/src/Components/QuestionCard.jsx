@@ -182,10 +182,77 @@ const QuestionCard = () => {
     }
     return null;
   };
-  function handleSubmit() {
+  // async function handleSubmit() {
+  //   const behaviorAnalysis = analyticsRef.current.getCurrentAnalysis();
+  //   setAnswerObject((prev) => ({ ...prev, behaviorAnalysis }));
+  //   console.log(answerObject);
+  //   try {
+  //     const response = await fetch("http://localhost:8000/api/exam/submit/", {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+  //       },
+  //       body: formData,
+  //     });
+
+  //     if (response.ok) {
+  //       navigate("/exam-complete");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting exam:", error);
+  //   }
+  // }
+
+  async function handleSubmit() {
     const behaviorAnalysis = analyticsRef.current.getCurrentAnalysis();
-    setAnswerObject((prev) => ({ ...prev, behaviorAnalysis }));
-    console.log(answerObject);
+
+    // Create FormData instance
+    const formData = new FormData();
+
+    // Prepare exam data structure
+    const examData = {
+      userId: "Salman@gmail.com", // Add user email from auth context
+      domain: answerObject.domain,
+      answers: {
+        mcqs: answerObject.answers.mcqs,
+        descriptive: answerObject.answers.descriptive,
+        domainSpecific: {},
+      },
+      behaviorAnalysis,
+    };
+
+    // Handle file uploads
+    if (answerObject.answers.fileUploads.length > 0) {
+      const fileUpload = answerObject.answers.fileUploads[0]; // Get first file
+      formData.append("designFile", fileUpload.file);
+      examData.answers.domainSpecific = {
+        designFile: {
+          description: "", // Add description if needed
+          questionId: fileUpload.questionId,
+        },
+      };
+    }
+
+    // Append JSON data
+    console.log(examData);
+    formData.append("examData", JSON.stringify(examData));
+    var str = JSON.stringify(examData);
+    console.log(str)
+    try {
+      const response = await fetch("http://localhost:8000/api/exam/submit/", {
+        method: "POST",
+        headers: {
+          Authorization: ` Bearer ${localStorage.getItem("authToken")}`, // Use dynamic token
+        },
+        body: { examData: str },
+      });
+
+      if (response.ok) {
+        navigate("/exam-complete");
+      }
+    } catch (error) {
+      console.error("Error submitting exam:", error);
+    }
   }
   return (
     <div className={styles.container}>
