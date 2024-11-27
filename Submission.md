@@ -74,12 +74,16 @@ Documentation for the ProctorPlus exam submission and evaluation system, includi
 ```http
 # Submit Exam
 POST /api/exam/submit/
-Content-Type: application/json
+content-type:
+multipart/form-data; boundary=----WebKitFormBoundaryhWBZvCU2vzqrm7iK
 Authorization: Bearer <token>
 
 # Get Evaluation
 GET /api/exam/evaluate/{submission_id}/
 Authorization: Bearer <token>
+content-type:
+multipart/form-data; boundary=----WebKitFormBoundaryhWBZvCU2vzqrm7iK
+
 
 # payload is like tese
 Key: examData
@@ -100,20 +104,6 @@ Value: {"domain":"design","answers":{"mcqs":[],"descriptive":[...],"domainSpecif
     }
 }
 ```
-
-### Passing Criteria
-
-- Minimum passing score: 60%
-- No suspicious behavior detected
-- All sections attempted
-
-### Error Handling
-
-- Invalid submissions return 400
-- Unauthorized access returns 401
-- Not found returns 404
-- Server errors return 500
-- Detailed error messages in response
 
 ## Security Notes
 

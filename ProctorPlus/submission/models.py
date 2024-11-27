@@ -13,6 +13,7 @@ class ExamSubmission(models.Model):
     domain = models.CharField(max_length=20, choices=DOMAIN_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    total_score = models.IntegerField(default=0, blank=True) #score
 
     def __str__(self):
         return f"{self.user.email}'s {self.domain} exam submission"
@@ -22,6 +23,8 @@ class MCQAnswer(models.Model):
     question_id = models.CharField(max_length=50)
     answer = models.CharField(max_length=255)
 
+    is_correct = models.BooleanField(default=False, blank=True) 
+
     def __str__(self):
         return f"MCQ Answer for {self.question_id}"
 
@@ -29,6 +32,9 @@ class DescriptiveAnswer(models.Model):
     submission = models.ForeignKey(ExamSubmission, related_name='descriptive_answers', on_delete=models.CASCADE)
     question_id = models.CharField(max_length=50)
     answer = models.TextField()
+
+    score = models.IntegerField(default=0, blank=True)  # New field - out of 10
+
 
     def __str__(self):
         return f"Descriptive Answer for {self.question_id}"
@@ -49,6 +55,7 @@ class DomainSpecificAnswer(models.Model):
     video_description = models.TextField(null=True, blank=True)
     
     question_id = models.CharField(max_length=50)
+    score = models.IntegerField(null=True, blank=True)  # Made nullable
 
     def __str__(self):
         return f"Domain Specific Answer for {self.submission.domain}"

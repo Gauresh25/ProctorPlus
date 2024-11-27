@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from .models import ExamSubmission, MCQAnswer, DescriptiveAnswer, DomainSpecificAnswer, BehaviorAnalysis
+from .evaluator import ExamEvaluator
 import logging
 import json
 
@@ -87,10 +88,14 @@ def submit_exam(request):
                 backspace_count=0,  # Extract from metrics if available
                 total_key_presses=metrics.get('totalKeyPresses', 0)
             )
+
+        # After creating the submission, evaluate it
+        evaluator = ExamEvaluator(submission.id)
+        evaluator.evaluate_submission()
         
         return Response({
             'status': 'success',
-            'message': 'Exam submitted successfully',
+            'message': 'Exam submitted and evaluated successfully',
             'submissionId': submission.id
         }, status=status.HTTP_201_CREATED)
         
