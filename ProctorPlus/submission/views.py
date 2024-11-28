@@ -1,7 +1,7 @@
 # submission/views.py
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from .models import ExamSubmission, MCQAnswer, DescriptiveAnswer, DomainSpecificAnswer, BehaviorAnalysis,PlagarismAnalysis
@@ -9,7 +9,7 @@ from .evaluator import ExamEvaluator
 import logging
 import json
 from  django.conf import settings
-
+from django.db.models import Avg, Count
 
 
 
@@ -131,3 +131,160 @@ def submit_exam(request):
             'status': 'error',
             'message': str(e)
         }, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def get_submissions_analytics(request):
+    # Get overall statistics
+    total_submissions = ExamSubmission.objects.count()
+    submissions_by_domain = ExamSubmission.objects.values('domain').annotate(
+        count=Count('id'),
+        avg_score=Avg('total_score')
+    )
+    
+    # Get all submissions with related data
+    submissions = ExamSubmission.objects.select_related(
+        'user', 
+        'behavior_analysis'
+    ).prefetch_related(
+        'mcq_answers',
+        'descriptive_answers',
+        'domain_specific_answer',
+        'Plagarism_Analysis'
+    ).order_by('-created_at')
+    
+    # Format submission data
+    submissions_data = []
+    for sub in submissions:
+        submission_dict = {
+            'id': sub.id,
+            'user_email': sub.user.email,
+            'domain': sub.domain,
+            'total_score': sub.total_score,
+            'created_at': sub.created_at,
+            
+            # MCQ answers
+            'mcq_answers': [{
+                'question_id': mcq.question_id,
+                'answer': mcq.answer,
+                'is_correct': mcq.is_correct
+            } for mcq in sub.mcq_answers.all()],
+            
+            # Descriptive answers
+            'descriptive_answers': [{
+                'question_id': desc.question_id,
+                'answer': desc.answer,
+                'score': desc.score
+            } for desc in sub.descriptive_answers.all()],
+        }
+        
+        # Add behavior analysis if exists
+        if hasattr(sub, 'behavior_analysis'):
+            submission_dict['behavior_analysis'] = {
+                'is_likely_bot': sub.behavior_analysis.is_likely_bot,
+                'confidence': sub.behavior_analysis.confidence,
+                'typing_speed': sub.behavior_analysis.typing_speed,
+                'backspace_count': sub.behavior_analysis.backspace_count
+            }
+            
+        # Add plagiarism data if exists
+        submission_dict['plagiarism'] = [{
+            'label': plag.label,
+            'confidence': plag.confidence,
+            'question_id': plag.question_id
+        } for plag in sub.Plagarism_Analysis.all()]
+        
+        submissions_data.append(submission_dict)
+    
+    return Response({
+        'status': 'success',
+        'data': {
+            'total_submissions': total_submissions,
+            'domain_statistics': submissions_by_domain,
+            'submissions': submissions_data
+        }
+    })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def get_submission_detail(request, submission_id):
+    try:
+        sub = ExamSubmission.objects.select_related(
+            'user', 
+            'behavior_analysis'
+        ).prefetch_related(
+            'mcq_answers',
+            'descriptive_answers',
+            'domain_specific_answer',
+            'Plagarism_Analysis'
+        ).get(id=submission_id)
+        
+        # Build detailed response
+        response_data = {
+            'id': sub.id,
+            'user_email': sub.user.email,
+            'domain': sub.domain,
+            'total_score': sub.total_score,
+            'created_at': sub.created_at,
+            
+            # MCQ answers
+            'mcq_answers': [{
+                'question_id': mcq.question_id,
+                'answer': mcq.answer,
+                'is_correct': mcq.is_correct
+            } for mcq in sub.mcq_answers.all()],
+            
+            # Descriptive answers
+            'descriptive_answers': [{
+                'question_id': desc.question_id,
+                'answer': desc.answer,
+                'score': desc.score
+            } for desc in sub.descriptive_answers.all()],
+            
+            # Domain specific answers
+            'domain_specific': None,
+            
+            # Behavior analysis
+            'behavior_analysis': None,
+            
+            # Plagiarism analysis
+            'plagiarism': [{
+                'label': plag.label,
+                'confidence': plag.confidence,
+                'question_id': plag.question_id
+            } for plag in sub.Plagarism_Analysis.all()]
+        }
+        
+        # Add domain specific data if exists
+        domain_answer = sub.domain_specific_answer.first()
+        if domain_answer:
+            response_data['domain_specific'] = {
+                'question_id': domain_answer.question_id,
+                'score': domain_answer.score,
+                'code': domain_answer.code,
+                'design_file_url': domain_answer.design_file_url,
+                'video_file_url': domain_answer.video_file_url,
+            }
+            
+        # Add behavior analysis if exists
+        if hasattr(sub, 'behavior_analysis'):
+            response_data['behavior_analysis'] = {
+                'is_likely_bot': sub.behavior_analysis.is_likely_bot,
+                'confidence': sub.behavior_analysis.confidence,
+                'reasons': sub.behavior_analysis.reasons,
+                'typing_speed': sub.behavior_analysis.typing_speed,
+                'backspace_count': sub.behavior_analysis.backspace_count,
+                'total_key_presses': sub.behavior_analysis.total_key_presses
+            }
+        
+        return Response({
+            'status': 'success',
+            'data': response_data
+        })
+        
+    except ExamSubmission.DoesNotExist:
+        return Response({
+            'status': 'error',
+            'message': 'Submission not found'
+        }, status=status.HTTP_404_NOT_FOUND)
