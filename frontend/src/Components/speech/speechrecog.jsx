@@ -1,98 +1,132 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
-const AudioMCQMonitor = () => {
-  const [transcript, setTranscript] = useState('');
-  const [flaggedKeywords, setFlaggedKeywords] = useState([]);
-  const [isListening, setIsListening] = useState(false);
+const Modal = ({ message, onClose }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+      <h3 className="text-lg font-semibold text-red-600 mb-4">Voice Detection Warning</h3>
+      <p className="text-gray-700 mb-6">{message}</p>
+      <button
+        onClick={onClose}
+        className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition-colors"
+      >
+        Acknowledge
+      </button>
+    </div>
+  </div>
+);
 
-  const question = "Which is the largest planet in our solar system?";
-  const options = ["A. Earth", "B. Jupiter", "C. Mars", "D. Venus"];
+const withAudioMonitoring = (WrappedComponent, options = {}) => {
+  const {
+    warningThreshold = 3,
+    maxViolations = 3,
+    keywordMatchTimeout = 10000
+  } = options;
 
-  const extractKeywords = (question, options) => {
-    const questionKeywords = question.split(' ').filter(word => word.length > 3);
-    const optionKeywords = options.map(option => option.split('. ')[1]);
-    return [...questionKeywords, ...optionKeywords];
-  };
+  return function AudioMonitoredComponent(props) {
+    const [violations, setViolations] = useState(0);
+    const [modalMessage, setModalMessage] = useState('');
+    const keywordMatchesRef = useRef(0);
+    const timeoutRef = useRef(null);
+    const recognitionRef = useRef(null);
 
-  const keywordsToFlag = extractKeywords(question, options);
+    const resetKeywordMatches = () => {
+      keywordMatchesRef.current = 0;
+    };
 
-  useEffect(() => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('Speech Recognition not supported in this browser.');
-      return;
-    }
-  }, []);
+    const handleViolation = () => {
+      setViolations(prev => {
+        const newCount = prev + 1;
+        if (newCount >= maxViolations) {
+          cleanup();
+          setModalMessage('Multiple voice violations detected. Exam will be terminated.');
+          if (props.onExamTerminate) {
+            props.onExamTerminate();
+          }
+          return newCount;
+        }
+        setModalMessage(`Speaking detected during exam. Warning ${newCount}/${maxViolations}`);
+        return newCount;
+      });
+    };
 
-  const startListening = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
+    const closeModal = () => {
+      setModalMessage('');
+    };
 
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
+    const startSpeechRecognition = () => {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        console.error('Speech Recognition not supported in this browser.');
+        return;
+      }
 
-    recognition.onresult = (event) => {
-      const interimTranscript = Array.from(event.results)
-        .map((result) => result[0].transcript)
-        .join('');
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
       
-      setTranscript(interimTranscript);
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
 
-      // Check for keywords
-      const detectedKeywords = keywordsToFlag.filter((keyword) =>
-        interimTranscript.toLowerCase().includes(keyword.toLowerCase())
-      );
+      recognitionRef.current.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map(result => result[0].transcript)
+          .join('')
+          .toLowerCase();
 
-      if (detectedKeywords.length > 0) {
-        setFlaggedKeywords((prev) => [...new Set([...prev, ...detectedKeywords])]);
+        // Check for exam-related keywords
+        const keywords = ['answer', 'question', 'option', 'correct', 'wrong', 'solution'];
+        const hasKeywords = keywords.some(keyword => transcript.includes(keyword));
+
+        if (hasKeywords) {
+          keywordMatchesRef.current += 1;
+
+          // Clear existing timeout
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
+
+          // Set new timeout to reset matches
+          timeoutRef.current = setTimeout(resetKeywordMatches, keywordMatchTimeout);
+
+          // Check if threshold is exceeded
+          if (keywordMatchesRef.current >= warningThreshold) {
+            handleViolation();
+            resetKeywordMatches();
+          }
+        }
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        if (event.error !== 'no-speech') {
+          console.error('Speech recognition error:', event.error);
+        }
+      };
+
+      recognitionRef.current.start();
+    };
+
+    const cleanup = () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
     };
 
-    recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-    };
+    useEffect(() => {
+      startSpeechRecognition();
+      return cleanup;
+    }, []);
 
-    recognition.onend = () => {
-      console.log('Speech recognition stopped.');
-    };
-
-    recognition.start();
-    setIsListening(true);
+    return (
+      <>
+        {modalMessage && (
+          <Modal message={modalMessage} onClose={closeModal} />
+        )}
+        <WrappedComponent {...props} audioViolations={violations} />
+      </>
+    );
   };
-
-  const stopListening = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.stop();
-    setIsListening(false);
-  };
-
-  return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h2>MCQ Audio Monitoring</h2>
-      <h3>Question:</h3>
-      <p>{question}</p>
-      <h4>Options:</h4>
-      <ul>
-        {options.map((option, index) => (
-          <li key={index}>{option}</li>
-        ))}
-      </ul>
-      <button onClick={isListening ? stopListening : startListening}>
-        {isListening ? 'Stop Listening' : 'Start Listening'}
-      </button>
-
-      <h3>Transcript:</h3>
-      <p>{transcript || 'No speech detected yet...'}</p>
-
-      <h3>Flagged Keywords:</h3>
-      <ul>
-        {flaggedKeywords.length > 0
-          ? flaggedKeywords.map((keyword, index) => <li key={index}>{keyword}</li>)
-          : <li>No keywords flagged yet.</li>}
-      </ul>
-    </div>
-  );
 };
 
-export default AudioMCQMonitor;
+export default withAudioMonitoring;

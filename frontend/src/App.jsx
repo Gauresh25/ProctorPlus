@@ -4,11 +4,12 @@ import { AuthProvider } from "./context/AuthContext";
 // import AuthenticationPage from "./pages/AuthenticationPage";
 import Authenticationpage from "./components/login";
 import AuthenticationPage from "./pages/AuthenticationPage";
-import PhoneDetectionWithDrag from "./Components/faceapi";
+import PhoneDetectionWithDrag from "./components/faceapi";
 import Dashoard from "./pages/Dashoard";
 import ExamInterface from "./pages/ExamInterface";
 import TestPage from "./pages/TestPage";
-import AudioMCQMonitor from "./Components/speech/speechrecog";
+import Admin from "./pages/Admin";
+import AudioMCQMonitor from "./components/speech/speechrecog";
 const App = () => {
   return (
     <AuthProvider>
@@ -37,6 +38,7 @@ const App = () => {
             <Route path="/test" element={<TestPage />} />
             <Route path="/speech" element={<AudioMCQMonitor />} />
             <Route path="/exam/:id" element={<ExamInterface />} />
+            <Route path="/reports" element={<Admin />} />
 
             <Route path="/exam" element={<ExamInterface />} />
 

@@ -4,67 +4,9 @@ import { useAuth } from "../context/AuthContext";
 import KeystrokeAnalytics from "./KeystrokeAnalytics";
 import FaceYawDetection from "./faceapi";
 import styles from "../styles/Ques.module.css";
+import ExamEnvironment from "./ExamEnvironment";
 
-// Expanded exam data to include all domains
-const examData = {
-  design: {
-    mcqs: Array(12)
-      .fill(null)
-      .map((_, i) => ({
-        id: `design-mcq-${i}`,
-        question: `Design MCQ Question ${i + 1}?`,
-        options: ["Option A", "Option B", "Option C", "Option D"],
-      })),
-    descriptive: [
-      {
-        id: "design-desc-1",
-        question: "Explain the principles of user-centered design.",
-      },
-      {
-        id: "design-desc-2",
-        question: "How would you approach designing a mobile-first website?",
-      },
-    ],
-  },
-  coding: {
-    mcqs: Array(12)
-      .fill(null)
-      .map((_, i) => ({
-        id: `coding-mcq-${i}`,
-        question: `Coding MCQ Question ${i + 1}?`,
-        options: ["Option A", "Option B", "Option C", "Option D"],
-      })),
-    descriptive: [
-      {
-        id: "coding-desc-1",
-        question: "Explain time complexity and space complexity.",
-      },
-      {
-        id: "coding-desc-2",
-        question: "What are the principles of clean code?",
-      },
-    ],
-  },
-  marketing: {
-    mcqs: Array(12)
-      .fill(null)
-      .map((_, i) => ({
-        id: `marketing-mcq-${i}`,
-        question: `Marketing MCQ Question ${i + 1}?`,
-        options: ["Option A", "Option B", "Option C", "Option D"],
-      })),
-    descriptive: [
-      {
-        id: "marketing-desc-1",
-        question: "Explain the key components of a digital marketing strategy.",
-      },
-      {
-        id: "marketing-desc-2",
-        question: "How would you measure the success of a marketing campaign?",
-      },
-    ],
-  },
-};
+import { examData, EXAM_CONFIG, getQuestionCount } from "../data/examData";
 
 const QuestionCard = ({ domain }) => {
   const navigate = useNavigate();
@@ -78,12 +20,7 @@ const QuestionCard = ({ domain }) => {
     descriptive: {},
     domainSpecific: {},
   });
-  const [timeLeft, setTimeLeft] = useState({
-    hours: 0,
-    minutes: 42,
-    seconds: 27,
-  });
-
+  const [timeLeft, setTimeLeft] = useState(EXAM_CONFIG.timeLimit);
   // Only start the timer when domain is selected
   useEffect(() => {
     if (!selectedDomain) return;
@@ -184,7 +121,7 @@ const QuestionCard = ({ domain }) => {
   }
 
   const renderQuestionButtons = () => {
-    const totalQuestions = currentSection === "mcqs" ? 12 : 2;
+    const totalQuestions = getQuestionCount(currentSection);
     return Array.from({ length: totalQuestions }, (_, index) => {
       const questionNumber = index + 1;
       const isAnswered =
@@ -211,6 +148,7 @@ const QuestionCard = ({ domain }) => {
 
   return (
     <div className={styles.container}>
+      <ExamEnvironment>
       <KeystrokeAnalytics ref={analyticsRef} />
       <FaceYawDetection />
 
@@ -229,8 +167,8 @@ const QuestionCard = ({ domain }) => {
       <main className={styles.mainContent}>
         <section className={styles.questionSection}>
           <h2 className={styles.questionHeader}>
-            Question {currentQuestionIndex + 1}
-            {currentSection === "mcqs" ? "/12" : "/2"}
+          Question {currentQuestionIndex + 1}/
+          {getQuestionCount(currentSection)}
           </h2>
 
           {currentSection === "mcqs" ? (
@@ -281,10 +219,10 @@ const QuestionCard = ({ domain }) => {
               className={styles.navButton}
               onClick={() => {
                 if (currentQuestionIndex > 0) {
-                  setCurrentQuestionIndex((prev) => prev - 1);
+                  setCurrentQuestionIndex(prev => prev - 1);
                 } else if (currentSection === "descriptive") {
                   setCurrentSection("mcqs");
-                  setCurrentQuestionIndex(11);
+                  setCurrentQuestionIndex(EXAM_CONFIG.mcqCount - 1);
                 }
               }}
             >
@@ -293,19 +231,13 @@ const QuestionCard = ({ domain }) => {
             <button
               className={styles.navButton}
               onClick={() => {
-                if (currentSection === "mcqs" && currentQuestionIndex < 11) {
-                  setCurrentQuestionIndex((prev) => prev + 1);
-                } else if (
-                  currentSection === "mcqs" &&
-                  currentQuestionIndex === 11
-                ) {
+                if (currentSection === "mcqs" && currentQuestionIndex < EXAM_CONFIG.mcqCount - 1) {
+                  setCurrentQuestionIndex(prev => prev + 1);
+                } else if (currentSection === "mcqs" && currentQuestionIndex === EXAM_CONFIG.mcqCount - 1) {
                   setCurrentSection("descriptive");
                   setCurrentQuestionIndex(0);
-                } else if (
-                  currentSection === "descriptive" &&
-                  currentQuestionIndex < 1
-                ) {
-                  setCurrentQuestionIndex((prev) => prev + 1);
+                } else if (currentSection === "descriptive" && currentQuestionIndex < EXAM_CONFIG.descriptiveCount - 1) {
+                  setCurrentQuestionIndex(prev => prev + 1);
                 } else {
                   handleSubmit();
                 }
@@ -329,6 +261,7 @@ const QuestionCard = ({ domain }) => {
           Submit Test
         </button>
       </footer>
+      </ExamEnvironment>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import QuestionCard from "../Components/QuestionCard";
+import QuestionCard from "../components/QuestionCard";
 import { useParams } from "react-router-dom";
 import Faceauth from "../Components/faceAuth/faceauth";
 import { useAuth } from "../context/AuthContext";
