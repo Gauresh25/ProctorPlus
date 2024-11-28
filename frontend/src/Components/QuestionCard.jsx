@@ -1,250 +1,156 @@
 import React, { useState, useEffect, useRef } from "react";
-import styles from "../styles/Ques.module.css";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import KeystrokeAnalytics from "./KeystrokeAnalytics";
 import FaceYawDetection from "./faceapi";
-const examData = [
-  {
-    type: "mcq",
-    questionId: "design-mcq-0",
-    title: "What is the capital of France?",
-    options: ["Berlin", "Madrid", "Paris", "Rome"],
-    correct: 2,
-  },
-  {
-    type: "mcq",
-    questionId: "design-mcq-1",
-    title: "Which programming language is used for web development?",
-    options: ["Python", "JavaScript", "C++", "Java"],
-    correct: 1,
-  },
-  {
-    type: "mcq",
-    questionId: "design-mcq-2",
-    title: "What is 5 + 3?",
-    options: ["5", "8", "10", "12"],
-    correct: 1,
-  },
-  {
-    type: "des",
-    questionId: "design-des-1",
-    title: "Tell me about yourself.",
-  },
-  {
-    type: "file",
-    questionId: "design-file-1",
-    title: "Upload your portfolio.",
-  },
-];
+import styles from "../styles/Ques.module.css";
 
-const QuestionCard = () => {
+// Expanded exam data to include all domains
+const examData = {
+  design: {
+    mcqs: Array(12)
+      .fill(null)
+      .map((_, i) => ({
+        id: `design-mcq-${i}`,
+        question: `Design MCQ Question ${i + 1}?`,
+        options: ["Option A", "Option B", "Option C", "Option D"],
+      })),
+    descriptive: [
+      {
+        id: "design-desc-1",
+        question: "Explain the principles of user-centered design.",
+      },
+      {
+        id: "design-desc-2",
+        question: "How would you approach designing a mobile-first website?",
+      },
+    ],
+  },
+  coding: {
+    mcqs: Array(12)
+      .fill(null)
+      .map((_, i) => ({
+        id: `coding-mcq-${i}`,
+        question: `Coding MCQ Question ${i + 1}?`,
+        options: ["Option A", "Option B", "Option C", "Option D"],
+      })),
+    descriptive: [
+      {
+        id: "coding-desc-1",
+        question: "Explain time complexity and space complexity.",
+      },
+      {
+        id: "coding-desc-2",
+        question: "What are the principles of clean code?",
+      },
+    ],
+  },
+  marketing: {
+    mcqs: Array(12)
+      .fill(null)
+      .map((_, i) => ({
+        id: `marketing-mcq-${i}`,
+        question: `Marketing MCQ Question ${i + 1}?`,
+        options: ["Option A", "Option B", "Option C", "Option D"],
+      })),
+    descriptive: [
+      {
+        id: "marketing-desc-1",
+        question: "Explain the key components of a digital marketing strategy.",
+      },
+      {
+        id: "marketing-desc-2",
+        question: "How would you measure the success of a marketing campaign?",
+      },
+    ],
+  },
+};
+
+const QuestionCard = ({ domain }) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const analyticsRef = useRef();
+  const [selectedDomain, setSelectedDomain] = useState(domain);
+  const [currentSection, setCurrentSection] = useState("mcqs");
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState({
+    mcqs: {},
+    descriptive: {},
+    domainSpecific: {},
+  });
   const [timeLeft, setTimeLeft] = useState({
     hours: 0,
     minutes: 42,
     seconds: 27,
   });
-  const [currentQuestion, setCurrentQuestion] = useState(1);
-  const [answerObject, setAnswerObject] = useState({
-    domain: "design",
-    answers: {
-      mcqs: [],
-      descriptive: [],
-      fileUploads: [],
-    },
-    behaviorAnalysis: {},
-  });
-  const analyticsRef = useRef();
 
+  // Only start the timer when domain is selected
   useEffect(() => {
+    if (!selectedDomain) return;
+
     const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime.seconds > 0) {
-          return { ...prevTime, seconds: prevTime.seconds - 1 };
-        } else if (prevTime.minutes > 0) {
-          return { ...prevTime, minutes: prevTime.minutes - 1, seconds: 59 };
-        } else if (prevTime.hours > 0) {
-          return { hours: prevTime.hours - 1, minutes: 59, seconds: 59 };
-        } else {
-          clearInterval(timer);
-          return prevTime;
-        }
+      setTimeLeft((prev) => {
+        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+        if (prev.minutes > 0)
+          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        if (prev.hours > 0)
+          return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        clearInterval(timer);
+        return prev;
       });
     }, 1000);
-
     return () => clearInterval(timer);
-  }, []);
+  }, [selectedDomain]);
 
-  const handleAnswerSelect = (optionIndex) => {
-    const question = examData[currentQuestion - 1];
-    const answer = `Option ${String.fromCharCode(65 + optionIndex)}`;
-    setAnswerObject((prev) => {
-      const updatedMcqs = prev.answers.mcqs.filter(
-        (mcq) => mcq.questionId !== question.questionId
-      );
-      updatedMcqs.push({
-        questionId: question.questionId,
-        answer,
-        type: "mcq",
-      });
-      return { ...prev, answers: { ...prev.answers, mcqs: updatedMcqs } };
-    });
-  };
+  const handleSubmit = async () => {
+    if (!selectedDomain) return;
 
-  const handleDescriptiveAnswer = (answerText) => {
-    const question = examData[currentQuestion - 1];
-    setAnswerObject((prev) => {
-      const updatedDescriptive = prev.answers.descriptive.filter(
-        (desc) => desc.questionId !== question.questionId
-      );
-      updatedDescriptive.push({
-        questionId: question.questionId,
-        answer: answerText,
-        type: "descriptive",
-      });
-      return {
-        ...prev,
-        answers: { ...prev.answers, descriptive: updatedDescriptive },
-      };
-    });
-  };
-
-  const handleFileUpload = (file) => {
-    const question = examData[currentQuestion - 1];
-    setAnswerObject((prev) => {
-      const updatedFileUploads = prev.answers.fileUploads.filter(
-        (upload) => upload.questionId !== question.questionId
-      );
-      updatedFileUploads.push({
-        questionId: question.questionId,
-        file,
-        type: "file",
-      });
-      return {
-        ...prev,
-        answers: { ...prev.answers, fileUploads: updatedFileUploads },
-      };
-    });
-  };
-
-  const renderQuestionButtons = (start, end) => {
-    return Array.from({ length: end - start + 1 }, (_, index) => {
-      const questionNumber = start + index;
-      let buttonClass = styles.questionButton;
-      if (questionNumber === currentQuestion) {
-        buttonClass += ` ${styles.current}`;
-      }
-      return (
-        <button
-          key={questionNumber}
-          className={buttonClass}
-          onClick={() => setCurrentQuestion(questionNumber)}
-        >
-          {questionNumber}
-        </button>
-      );
-    });
-  };
-
-  const renderAnswerField = () => {
-    const question = examData[currentQuestion - 1];
-    if (question.type === "mcq") {
-      return question.options.map((option, index) => (
-        <label key={index} className={styles.answerOption}>
-          <input
-            type="radio"
-            name="answer"
-            value={`Option ${String.fromCharCode(65 + index)}`}
-            checked={
-              answerObject.answers.mcqs.find(
-                (mcq) => mcq.questionId === question.questionId
-              )?.answer === `Option ${String.fromCharCode(65 + index)}`
-            }
-            onChange={() => handleAnswerSelect(index)}
-          />
-          {option}
-        </label>
-      ));
-    } else if (question.type === "des") {
-      return (
-        <textarea
-          className={styles.textArea}
-          placeholder="Write your answer here..."
-          onChange={(e) => handleDescriptiveAnswer(e.target.value)}
-        />
-      );
-    } else if (question.type === "file") {
-      return (
-        <input
-          type="file"
-          className={styles.fileInput}
-          onChange={(e) => handleFileUpload(e.target.files[0])}
-        />
-      );
-    }
-    return null;
-  };
-  // async function handleSubmit() {
-  //   const behaviorAnalysis = analyticsRef.current.getCurrentAnalysis();
-  //   setAnswerObject((prev) => ({ ...prev, behaviorAnalysis }));
-  //   console.log(answerObject);
-  //   try {
-  //     const response = await fetch("http://localhost:8000/api/exam/submit/", {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-  //       },
-  //       body: formData,
-  //     });
-
-  //     if (response.ok) {
-  //       navigate("/exam-complete");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting exam:", error);
-  //   }
-  // }
-
-  async function handleSubmit() {
     const behaviorAnalysis = analyticsRef.current.getCurrentAnalysis();
-
-    // Create FormData instance
     const formData = new FormData();
 
-    // Prepare exam data structure
-    const examData = {
-      userId: "Salman@gmail.com", // Add user email from auth context
-      domain: answerObject.domain,
+    const submissionData = {
+      userId: user?.email,
+      domain: selectedDomain,
       answers: {
-        mcqs: answerObject.answers.mcqs,
-        descriptive: answerObject.answers.descriptive,
-        domainSpecific: {},
+        mcqs: Object.entries(answers.mcqs).map(([id, answer]) => ({
+          questionId: id,
+          answer,
+          type: "mcq",
+        })),
+        descriptive: Object.entries(answers.descriptive).map(
+          ([id, answer]) => ({
+            questionId: id,
+            answer,
+            type: "descriptive",
+          })
+        ),
+        domainSpecific: {
+          [selectedDomain === "coding"
+            ? "dsaAnswer"
+            : selectedDomain === "design"
+            ? "designFile"
+            : "videoFile"]: {
+            description: answers.domainSpecific.description || "",
+            questionId: `${selectedDomain}-${selectedDomain}-1`,
+          },
+        },
       },
       behaviorAnalysis,
     };
 
-    // Handle file uploads
-    if (answerObject.answers.fileUploads.length > 0) {
-      const fileUpload = answerObject.answers.fileUploads[0]; // Get first file
-      formData.append("designFile", fileUpload.file);
-      examData.answers.domainSpecific = {
-        designFile: {
-          description: "", // Add description if needed
-          questionId: fileUpload.questionId,
-        },
-      };
+    if (answers.domainSpecific.file) {
+      formData.append(`${selectedDomain}File`, answers.domainSpecific.file);
     }
 
-    // Append JSON data
-    console.log(examData);
-    formData.append("examData", JSON.stringify(examData));
-    var str = JSON.stringify(examData);
-    console.log(str)
+    formData.append("examData", JSON.stringify(submissionData));
+
     try {
       const response = await fetch("http://localhost:8000/api/exam/submit/", {
         method: "POST",
         headers: {
-          Authorization: ` Bearer ${localStorage.getItem("authToken")}`, // Use dynamic token
+          Authorization: ` Bearer ${localStorage.getItem("authToken")}`,
         },
-        body: { examData: str },
+        body: formData,
       });
 
       if (response.ok) {
@@ -253,54 +159,171 @@ const QuestionCard = () => {
     } catch (error) {
       console.error("Error submitting exam:", error);
     }
+  };
+
+  // If domain not selected, show domain selection screen
+  if (!selectedDomain) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.domainSelection}>
+          <h2 className={styles.title}>Select Your Domain</h2>
+          <div className={styles.domainButtons}>
+            {Object.keys(examData).map((domain) => (
+              <button
+                key={domain}
+                className={styles.domainButton}
+                onClick={() => setSelectedDomain(domain)}
+              >
+                {domain.charAt(0).toUpperCase() + domain.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
+
+  const renderQuestionButtons = () => {
+    const totalQuestions = currentSection === "mcqs" ? 12 : 2;
+    return Array.from({ length: totalQuestions }, (_, index) => {
+      const questionNumber = index + 1;
+      const isAnswered =
+        currentSection === "mcqs"
+          ? answers.mcqs[`${selectedDomain}-mcq-${index}`]
+          : answers.descriptive[`${selectedDomain}-desc-${index + 1}`];
+
+      return (
+        <button
+          key={questionNumber}
+          className={`${styles.questionButton} ${
+            currentQuestionIndex === index ? styles.current : ""
+          } ${isAnswered ? styles.answered : ""}`}
+          onClick={() => setCurrentQuestionIndex(index)}
+        >
+          {questionNumber}
+        </button>
+      );
+    });
+  };
+
+  const currentQuestions = examData[selectedDomain][currentSection];
+  const currentQuestion = currentQuestions[currentQuestionIndex];
+
   return (
     <div className={styles.container}>
       <KeystrokeAnalytics ref={analyticsRef} />
       <FaceYawDetection />
+
       <header className={styles.header}>
-        <h1 className={styles.title}>Online Test - Freelancing</h1>
+        <h1 className={styles.title}>
+          Online Test -{" "}
+          {selectedDomain.charAt(0).toUpperCase() + selectedDomain.slice(1)}
+        </h1>
         <div className={styles.timer}>
           Time Left: {String(timeLeft.hours).padStart(2, "0")}:
           {String(timeLeft.minutes).padStart(2, "0")}:
           {String(timeLeft.seconds).padStart(2, "0")}
         </div>
       </header>
+
       <main className={styles.mainContent}>
         <section className={styles.questionSection}>
-          <h2 className={styles.questionHeader}>Question {currentQuestion}</h2>
-          <p className={styles.questionText}>
-            {examData[currentQuestion - 1].title}
-          </p>
-          <form className={styles.answerForm}>{renderAnswerField()}</form>
+          <h2 className={styles.questionHeader}>
+            Question {currentQuestionIndex + 1}
+            {currentSection === "mcqs" ? "/12" : "/2"}
+          </h2>
+
+          {currentSection === "mcqs" ? (
+            <>
+              <p className={styles.questionText}>{currentQuestion.question}</p>
+              <div className={styles.answerForm}>
+                {currentQuestion.options.map((option, index) => (
+                  <label key={index} className={styles.answerOption}>
+                    <input
+                      type="radio"
+                      name={currentQuestion.id}
+                      value={option}
+                      checked={answers.mcqs[currentQuestion.id] === option}
+                      onChange={() =>
+                        setAnswers((prev) => ({
+                          ...prev,
+                          mcqs: { ...prev.mcqs, [currentQuestion.id]: option },
+                        }))
+                      }
+                    />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <p className={styles.questionText}>{currentQuestion.question}</p>
+              <textarea
+                className={styles.textArea}
+                value={answers.descriptive[currentQuestion.id] || ""}
+                onChange={(e) =>
+                  setAnswers((prev) => ({
+                    ...prev,
+                    descriptive: {
+                      ...prev.descriptive,
+                      [currentQuestion.id]: e.target.value,
+                    },
+                  }))
+                }
+                placeholder="Write your answer here..."
+              />
+            </>
+          )}
+
           <div className={styles.navigationButtons}>
             <button
               className={styles.navButton}
-              onClick={() =>
-                setCurrentQuestion((prev) => Math.max(1, prev - 1))
-              }
+              onClick={() => {
+                if (currentQuestionIndex > 0) {
+                  setCurrentQuestionIndex((prev) => prev - 1);
+                } else if (currentSection === "descriptive") {
+                  setCurrentSection("mcqs");
+                  setCurrentQuestionIndex(11);
+                }
+              }}
             >
               Previous
             </button>
             <button
               className={styles.navButton}
-              onClick={() =>
-                setCurrentQuestion((prev) =>
-                  Math.min(examData.length, prev + 1)
-                )
-              }
+              onClick={() => {
+                if (currentSection === "mcqs" && currentQuestionIndex < 11) {
+                  setCurrentQuestionIndex((prev) => prev + 1);
+                } else if (
+                  currentSection === "mcqs" &&
+                  currentQuestionIndex === 11
+                ) {
+                  setCurrentSection("descriptive");
+                  setCurrentQuestionIndex(0);
+                } else if (
+                  currentSection === "descriptive" &&
+                  currentQuestionIndex < 1
+                ) {
+                  setCurrentQuestionIndex((prev) => prev + 1);
+                } else {
+                  handleSubmit();
+                }
+              }}
             >
-              Next
+              {currentSection === "descriptive" && currentQuestionIndex === 1
+                ? "Submit"
+                : "Next"}
             </button>
           </div>
         </section>
+
         <aside className={styles.questionStatus}>
           <h3>Questions</h3>
-          <div className={styles.questionGrid}>
-            {renderQuestionButtons(1, examData.length)}
-          </div>
+          <div className={styles.questionGrid}>{renderQuestionButtons()}</div>
         </aside>
       </main>
+
       <footer className={styles.footer}>
         <button className={styles.submitButton} onClick={handleSubmit}>
           Submit Test

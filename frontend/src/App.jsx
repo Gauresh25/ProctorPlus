@@ -6,6 +6,7 @@ import PhoneDetectionWithDrag from "./Components/faceapi";
 import Dashoard from "./pages/Dashoard";
 import ExamInterface from "./pages/ExamInterface";
 import TestPage from "./pages/TestPage";
+import AudioMCQMonitor from "./Components/speech/speechrecog";
 const App = () => {
   return (
     <AuthProvider>
@@ -32,7 +33,7 @@ const App = () => {
             <Route path="/face" element={<PhoneDetectionWithDrag />} />
             <Route path="/dashboard/*" element={<Dashoard />} />
             <Route path="/test" element={<TestPage />} />
-
+            <Route path="/speech" element={<AudioMCQMonitor />} />
             <Route path="/exam/:id" element={<ExamInterface />} />
           </Routes>
         </BrowserRouter>
