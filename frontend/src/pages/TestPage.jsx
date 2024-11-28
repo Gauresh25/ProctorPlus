@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import KeystrokeAnalytics from "../components/KeystrokeAnalytics";
+import ExamEnvironment from "../components/ExamEnvironment";
 
 const TestForm = () => {
   const analyticsRef = useRef();
@@ -35,7 +36,7 @@ const TestForm = () => {
   };
 
   return (
-    <div className="p-4">
+    <ExamEnvironment><div className="p-4">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block mb-2">Type something to test:</label>
@@ -67,6 +68,7 @@ const TestForm = () => {
         </div>
       )}
     </div>
+    </ExamEnvironment>
   );
 };
 

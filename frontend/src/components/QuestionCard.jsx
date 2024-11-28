@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import KeystrokeAnalytics from "./KeystrokeAnalytics";
 import FaceYawDetection from "./faceapi";
 import styles from "../styles/Ques.module.css";
+import ExamEnvironment from "../components/ExamEnvironment";
 
 // Expanded exam data to include all domains
 const examData = {
@@ -186,12 +187,23 @@ const QuestionCard = () => {
     });
   };
 
+  const handleAnalyticsAlert = (alert) => {
+    console.log("Suspicious activity:", alert);
+    // Add any additional handling here
+  };
+
   const currentQuestions = examData[selectedDomain][currentSection];
   const currentQuestion = currentQuestions[currentQuestionIndex];
 
   return (
-    <div className={styles.container}>
-      <KeystrokeAnalytics ref={analyticsRef} />
+    <ExamEnvironment>
+      <div className={styles.container}>
+      <KeystrokeAnalytics 
+            ref={analyticsRef} 
+            sensitivity={0.5}
+            alertThreshold={0.3}
+            onAlert={handleAnalyticsAlert}
+      />
       <FaceYawDetection />
       
       <header className={styles.header}>
@@ -296,6 +308,7 @@ const QuestionCard = () => {
         </button>
       </footer>
     </div>
+    </ExamEnvironment>
   );
 };
 

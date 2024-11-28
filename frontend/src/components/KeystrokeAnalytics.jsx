@@ -1,76 +1,68 @@
-import React, {
-  useState,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-} from "react";
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+//import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
+const KeystrokeAnalytics = forwardRef(({ 
+  sensitivity = 0.5, 
+  alertThreshold = 0.3,
+  onAlert = null 
+}, ref) => {
   const [behaviorData, setBehaviorData] = useState({
-    // Keystroke patterns
     keyTiming: [],
     specialKeyCount: 0,
     typingSpeed: [],
     backspaceCount: 0,
     totalKeyPresses: 0,
     lastKeyTime: null,
-
-    // Mouse patterns
     mouseCoordinates: [],
     mouseSpeed: [],
     mouseClicks: [],
     lastMousePosition: null,
     totalMouseDistance: 0,
-
-    // Copy-paste patterns
     copyPasteEvents: [],
     totalCopyPaste: 0,
     consecutivePastes: 0,
     lastPasteTime: null,
-
-    // Tab switching
     tabSwitches: [],
     lastTabFocusTime: null,
     totalTabSwitches: 0,
-
-    // Browser window
     windowResizes: [],
     windowFocusEvents: [],
   });
 
-  // All your existing analysis functions remain the same
+  const [alerts, setAlerts] = useState([]);
+
+  const addAlert = (pattern, risk) => {
+    const alert = {
+      id: Date.now(),
+      pattern,
+      risk,
+      timestamp: new Date().toLocaleTimeString()
+    };
+    
+    setAlerts(prev => [...prev, alert]);
+    if (onAlert) onAlert(alert);
+  };
+
   const analyzeKeyboardPatterns = () => {
     if (behaviorData.keyTiming.length < 5) return null;
 
-    const analysis = {
-      risk: 0,
-      patterns: [],
-    };
-
-    // Check typing rhythm consistency
+    const analysis = { risk: 0, patterns: [] };
     const timings = behaviorData.keyTiming;
     const avgTiming = timings.reduce((a, b) => a + b, 0) / timings.length;
-    const variance =
-      timings.reduce((a, b) => a + Math.pow(b - avgTiming, 2), 0) /
-      timings.length;
+    const variance = timings.reduce((a, b) => a + Math.pow(b - avgTiming, 2), 0) / timings.length;
 
     if (variance < 10 * sensitivity) {
       analysis.risk += 0.4;
       analysis.patterns.push("Unnaturally consistent typing rhythm");
     }
 
-    // Check typing speed
-    const avgSpeed =
-      behaviorData.typingSpeed.reduce((a, b) => a + b, 0) /
-      behaviorData.typingSpeed.length;
+    const avgSpeed = behaviorData.typingSpeed.reduce((a, b) => a + b, 0) / behaviorData.typingSpeed.length;
     if (avgSpeed > 200 / sensitivity) {
       analysis.risk += 0.3;
       analysis.patterns.push("Superhuman typing speed detected");
     }
 
-    // Analyze backspace usage
-    const backspaceRatio =
-      behaviorData.backspaceCount / behaviorData.totalKeyPresses;
+    const backspaceRatio = behaviorData.backspaceCount / behaviorData.totalKeyPresses;
     if (backspaceRatio < 0.01 * sensitivity) {
       analysis.risk += 0.2;
       analysis.patterns.push("Suspiciously low error correction rate");
@@ -82,22 +74,16 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
   const analyzeMousePatterns = () => {
     if (behaviorData.mouseCoordinates.length < 10) return null;
 
-    const analysis = {
-      risk: 0,
-      patterns: [],
-    };
-
-    // Check for linear movements
+    const analysis = { risk: 0, patterns: [] };
     let linearMovements = 0;
+
     for (let i = 2; i < behaviorData.mouseCoordinates.length; i++) {
       const p1 = behaviorData.mouseCoordinates[i - 2];
       const p2 = behaviorData.mouseCoordinates[i - 1];
       const p3 = behaviorData.mouseCoordinates[i];
 
-      // Calculate angle between movements
-      const angle =
-        Math.atan2(p3.y - p2.y, p3.x - p2.x) -
-        Math.atan2(p2.y - p1.y, p2.x - p1.x);
+      const angle = Math.atan2(p3.y - p2.y, p3.x - p2.x) - 
+                    Math.atan2(p2.y - p1.y, p2.x - p1.x);
 
       if (Math.abs(angle) < 0.1 * sensitivity) {
         linearMovements++;
@@ -110,11 +96,9 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
       analysis.patterns.push("Unnaturally linear mouse movements");
     }
 
-    // Check mouse speed consistency
     const speeds = behaviorData.mouseSpeed;
     const avgSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
-    const speedVariance =
-      speeds.reduce((a, b) => a + Math.pow(b - avgSpeed, 2), 0) / speeds.length;
+    const speedVariance = speeds.reduce((a, b) => a + Math.pow(b - avgSpeed, 2), 0) / speeds.length;
 
     if (speedVariance < 5 * sensitivity) {
       analysis.risk += 0.2;
@@ -127,20 +111,14 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
   const analyzeCopyPaste = () => {
     if (behaviorData.copyPasteEvents.length < 3) return null;
 
-    const analysis = {
-      risk: 0,
-      patterns: [],
-    };
+    const analysis = { risk: 0, patterns: [] };
+    const copyPasteRatio = behaviorData.totalCopyPaste / behaviorData.totalKeyPresses;
 
-    // Check frequency of copy-paste
-    const copyPasteRatio =
-      behaviorData.totalCopyPaste / behaviorData.totalKeyPresses;
     if (copyPasteRatio > 0.3 / sensitivity) {
       analysis.risk += 0.4;
       analysis.patterns.push("Excessive copy-paste usage");
     }
 
-    // Check for rapid consecutive pastes
     if (behaviorData.consecutivePastes > 3 / sensitivity) {
       analysis.risk += 0.3;
       analysis.patterns.push("Suspicious paste pattern detected");
@@ -149,17 +127,14 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
     return analysis;
   };
 
-  // Modified to return analysis instead of calling callback
   const performCompleteAnalysis = () => {
     const keyboardAnalysis = analyzeKeyboardPatterns();
     const mouseAnalysis = analyzeMousePatterns();
     const copyPasteAnalysis = analyzeCopyPaste();
 
-    const totalRisk =
-      ((keyboardAnalysis?.risk || 0) +
-        (mouseAnalysis?.risk || 0) +
-        (copyPasteAnalysis?.risk || 0)) /
-      3;
+    const totalRisk = ((keyboardAnalysis?.risk || 0) + 
+                      (mouseAnalysis?.risk || 0) + 
+                      (copyPasteAnalysis?.risk || 0)) / 3;
 
     const combinedPatterns = [
       ...(keyboardAnalysis?.patterns || []),
@@ -167,7 +142,7 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
       ...(copyPasteAnalysis?.patterns || []),
     ];
 
-    return {
+    const analysis = {
       isLikelyBot: totalRisk > 0.1,
       risk: totalRisk,
       confidence: Math.min(combinedPatterns.length * 0.2, 1),
@@ -182,30 +157,29 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
         totalKeyPresses: behaviorData.totalKeyPresses,
       },
     };
+
+    if (analysis.risk > alertThreshold) {
+      analysis.patterns.forEach(pattern => addAlert(pattern, analysis.risk));
+    }
+
+    return analysis;
   };
 
-  // Expose the analysis method via ref
   useImperativeHandle(ref, () => ({
-    getCurrentAnalysis: () => {
-      const analysis = performCompleteAnalysis();
-      console.log("Current analysis:", analysis); // Debug log
-      return analysis;
-    },
+    getCurrentAnalysis: performCompleteAnalysis
   }));
 
-  // All your existing event handlers remain the same
   const handleMouseMove = (event) => {
-    setBehaviorData((prev) => {
+    setBehaviorData(prev => {
       const currentPosition = { x: event.clientX, y: event.clientY };
       const newData = { ...prev };
 
       if (prev.lastMousePosition) {
         const distance = Math.sqrt(
           Math.pow(currentPosition.x - prev.lastMousePosition.x, 2) +
-            Math.pow(currentPosition.y - prev.lastMousePosition.y, 2)
+          Math.pow(currentPosition.y - prev.lastMousePosition.y, 2)
         );
-        const speed =
-          distance / ((Date.now() - prev.lastMousePosition.time) / 1000);
+        const speed = distance / ((Date.now() - prev.lastMousePosition.time) / 1000);
 
         newData.mouseCoordinates.push(currentPosition);
         newData.mouseSpeed.push(speed);
@@ -218,24 +192,21 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
   };
 
   const handleCopyPaste = (event) => {
-    setBehaviorData((prev) => {
+    setBehaviorData(prev => {
       const newData = { ...prev };
       const currentTime = Date.now();
-      const eventType = event.type;
 
       newData.copyPasteEvents.push({
-        type: eventType,
+        type: event.type,
         time: currentTime,
       });
 
-      if (eventType === "paste") {
+      if (event.type === "paste") {
         newData.totalCopyPaste++;
-
-        if (prev.lastPasteTime && currentTime - prev.lastPasteTime < 1000) {
-          newData.consecutivePastes++;
-        } else {
-          newData.consecutivePastes = 1;
-        }
+        newData.consecutivePastes = 
+          prev.lastPasteTime && currentTime - prev.lastPasteTime < 1000 
+            ? prev.consecutivePastes + 1 
+            : 1;
         newData.lastPasteTime = currentTime;
       }
 
@@ -244,7 +215,7 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
   };
 
   const handleVisibilityChange = () => {
-    setBehaviorData((prev) => {
+    setBehaviorData(prev => {
       const newData = { ...prev };
       const currentTime = Date.now();
 
@@ -258,9 +229,8 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
     });
   };
 
-  // Add keyboard event handler
   const handleKeydown = (event) => {
-    setBehaviorData((prev) => {
+    setBehaviorData(prev => {
       const currentTime = Date.now();
       const newData = { ...prev };
 
@@ -287,24 +257,51 @@ const KeystrokeAnalytics = forwardRef(({ sensitivity = 0.5 }, ref) => {
   };
 
   useEffect(() => {
-    // Set up event listeners
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("copy", handleCopyPaste);
     document.addEventListener("paste", handleCopyPaste);
     document.addEventListener("visibilitychange", handleVisibilityChange);
     document.addEventListener("keydown", handleKeydown);
 
+    const analysisInterval = setInterval(() => {
+      const analysis = performCompleteAnalysis();
+      if (analysis.risk > alertThreshold) {
+        analysis.patterns.forEach(pattern => addAlert(pattern, analysis.risk));
+      }
+    }, 5000); // 5-second intervals
+
     return () => {
-      // Cleanup
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("copy", handleCopyPaste);
       document.removeEventListener("paste", handleCopyPaste);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.removeEventListener("keydown", handleKeydown);
+      clearInterval(analysisInterval);
     };
   }, []);
 
-  return null;
+  return (
+    <div className="fixed bottom-4 right-4 space-y-2 w-96 z-50">
+      {alerts.slice(-3).map(alert => (
+        <div 
+          key={alert.id} 
+          className={`${
+            alert.risk > 0.5 ? 'bg-red-100' : 'bg-yellow-100'
+          } p-4 rounded-lg shadow-lg border`}
+        >
+          <div className="font-medium">Suspicious Activity Detected</div>
+          <div>
+            <div>{alert.pattern}</div>
+            <div className="text-sm text-gray-500 mt-1">
+              Risk Level: {(alert.risk * 100).toFixed(1)}%
+              <span className="mx-2">•</span>
+              {alert.timestamp}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 });
 
 export default KeystrokeAnalytics;
