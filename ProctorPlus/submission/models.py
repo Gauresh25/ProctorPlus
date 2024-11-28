@@ -73,3 +73,14 @@ class BehaviorAnalysis(models.Model):
 
     def __str__(self):
         return f"Behavior Analysis for {self.submission}"
+    
+class PlagarismAnalysis(models.Model):
+    submission= models.ForeignKey(
+        ExamSubmission,
+        related_name="Plagarism_Analysis",
+        on_delete=models.CASCADE
+        )
+    label = models.CharField(max_length=100)
+    confidence = models.FloatField()
+    question_id = models.CharField(max_length=100,default="")
+    

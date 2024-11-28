@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import KeystrokeAnalytics from "../components/KeystrokeAnalytics";
 import ExamEnvironment from "../components/ExamEnvironment";
 
-const TestForm = () => {
+const TestPage= () => {
   const analyticsRef = useRef();
   const [formData, setFormData] = useState({
     answer: "",
@@ -72,4 +72,4 @@ const TestForm = () => {
   );
 };
 
-export default TestForm;
+export default TestPage;

@@ -4,10 +4,15 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
-from .models import ExamSubmission, MCQAnswer, DescriptiveAnswer, DomainSpecificAnswer, BehaviorAnalysis
+from .models import ExamSubmission, MCQAnswer, DescriptiveAnswer, DomainSpecificAnswer, BehaviorAnalysis,PlagarismAnalysis
 from .evaluator import ExamEvaluator
 import logging
 import json
+from  django.conf import settings
+
+
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +21,8 @@ logger = logging.getLogger(__name__)
 def submit_exam(request):
     try:
         # Get examData from form data and parse it as JSON
-        exam_data = json.loads(request.data.get('examData', '{}'))
-        logger.info(f"Parsed exam data: {json.dumps(exam_data, indent=2)}")
         
+        exam_data = json.loads(request.data.get('examData', '{}'))        
         # Create main submission
         submission = ExamSubmission.objects.create(
             user=request.user,
@@ -36,7 +40,20 @@ def submit_exam(request):
                 question_id=desc.get('questionId'),
                 answer=desc.get('answer')
             )
-        
+       
+        for desc in descriptive_answers:
+            print(f"detecting {desc.get("answer")}")
+            detection_results= settings.AI_DETECOR.detect(
+                text=desc.get('answer'),
+                )
+            PlagarismAnalysis.objects.create(
+            submission = submission,
+            label = detection_results['label'],
+            confidence= detection_results['confidence'],
+            question_id = desc.get("questionId")
+            )
+            
+            
         # Save MCQ answers
         mcq_answers = answers.get('mcqs', [])
         for mcq in mcq_answers:

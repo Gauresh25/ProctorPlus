@@ -4,16 +4,11 @@ import { AuthProvider } from "./context/AuthContext";
 // import AuthenticationPage from "./pages/AuthenticationPage";
 import Authenticationpage from "./components/login";
 import AuthenticationPage from "./pages/AuthenticationPage";
+import PhoneDetectionWithDrag from "./Components/faceapi";
+import Dashoard from "./pages/Dashoard";
 import ExamInterface from "./pages/ExamInterface";
-
-import PhoneDetectionWithDrag from "./components/faceapi";
-// import FaceDetection from "./Components/faceapi";
-// import PhoneDetection from "./Components/faceapi";
-// import EyeTracking from "./Components/faceapi";
-// import EyeMovementTracker from "./Components/faceapi";
-
 import TestPage from "./pages/TestPage";
-
+import AudioMCQMonitor from "./Components/speech/speechrecog";
 const App = () => {
   return (
     <AuthProvider>
@@ -38,17 +33,10 @@ const App = () => {
             />
             <Route path="/auth" element={<AuthenticationPage />} />
             <Route path="/face" element={<PhoneDetectionWithDrag />} />
-            <Route
-              path="/dashboard"
-              element={
-                <div className="min-h-screen flex flex-col items-center justify-center">
-                  <h1 className="text-2xl font-bold">Welcome to Dashboard!</h1>
-                  <p className="mt-2">You're successfully logged in.</p>
-                </div>
-              }
-            />
-
+            <Route path="/dashboard/*" element={<Dashoard />} />
             <Route path="/test" element={<TestPage />} />
+            <Route path="/speech" element={<AudioMCQMonitor />} />
+            <Route path="/exam/:id" element={<ExamInterface />} />
 
             <Route path="/exam" element={<ExamInterface />} />
 

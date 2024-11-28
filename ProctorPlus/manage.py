@@ -3,6 +3,15 @@
 import os
 import sys
 
+def pre_render():
+    from transformers import AutoModel, AutoTokenizer
+    
+    # Specify the model name
+    model_name = "roberta-base-openai-detector"
+    # Download the model and tokenizer
+    model = AutoModel.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    print(f"Model and tokenizer for '{model_name}' have been downloaded.")
 
 def main():
     """Run administrative tasks."""

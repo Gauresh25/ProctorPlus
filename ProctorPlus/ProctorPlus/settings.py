@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
+from .plagarism import AIDetector
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     #'authentication',   
     'authentication.apps.AuthenticationConfig',  #
     'rest_framework_simplejwt',
-
+    'ExamInfo',
     'submission',
 ]
 
@@ -181,6 +181,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -196,7 +198,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authentication.User'
 CLERK_SECRET_KEY =  os.getenv('CLERK_SECRET_KEY')
 CLERK_JWT_PUBLIC_KEY =  os.getenv('CLERK_JWT_PUBLIC_KEY')
-
+AI_DETECOR = AIDetector()
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',

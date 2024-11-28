@@ -1,14 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
-import { load as cocoSSDLoad } from "@tensorflow-models/coco-ssd";
+import Draggable from "react-draggable";
+
 var count = 0;
+var nonecount = 0;
+var multiplecount = 0;
 
 const FaceYawDetection = () => {
   const videoRef = useRef(null);
-  let yawInterval = null;
-  let phoneDetectionInterval = null;
-  const [model, setModel] = useState(null);
-  const startPhoneDetection = async (model) => {};
+  let yawInterval = useRef(null);
+  const [sus, setsus] = useState(false);
+
+  function stoptimeout() {
+    if (yawInterval.current) {
+      clearInterval(yawInterval.current); // Clear the interval
+      yawInterval.current = null;
+    }
+  }
+
+  function resumetimeout(detectYaw) {
+    if (!yawInterval.current) {
+      detectYaw(); // Restart the detection process
+    }
+  }
+
   useEffect(() => {
     // Load models for face-api.js
     const loadModels = async () => {
@@ -16,17 +31,6 @@ const FaceYawDetection = () => {
       await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
       await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
     };
-
-    // Load COCO-SSD model using TensorFlow.js
-    // const loadPhoneDetectionModel = async () => {
-    //   try {
-    //     const model = await cocoSSDLoad();
-    //     console.log("model loaded")
-    //     startPhoneDetection(model);
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // };
 
     const startVideo = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -40,17 +44,19 @@ const FaceYawDetection = () => {
 
     const detectYaw = async () => {
       const options = new faceapi.TinyFaceDetectorOptions();
-      yawInterval = setInterval(async () => {
+      yawInterval.current = setInterval(async () => {
         const detections = await faceapi
-          .detectSingleFace(videoRef.current, options)
+          .detectAllFaces(videoRef.current, options)
           .withFaceLandmarks();
-        if (detections) {
-          const landmarks = detections.landmarks;
+        if (detections && detections.length === 1) {
+          const landmarks = detections[0].landmarks;
 
           // Get key points for yaw detection
           const leftEye = landmarks.getLeftEye();
           const rightEye = landmarks.getRightEye();
           const nose = landmarks.getNose();
+          multiplecount = 0;
+          nonecount = 0;
 
           // Calculate yaw using horizontal positions
           const noseX = nose[3].x; // Tip of the nose
@@ -62,7 +68,7 @@ const FaceYawDetection = () => {
           const rightDistance = Math.abs(noseX - rightEyeX);
 
           let yawDirection = "Looking Straight";
-          const THRESHOLD = 15;
+          const THRESHOLD = 20;
 
           if (rightDistance - leftDistance > THRESHOLD) {
             yawDirection = "Looking Left";
@@ -73,44 +79,62 @@ const FaceYawDetection = () => {
           } else {
             count = 0;
           }
-          console.log(count);
-          if (count > 10) {
-            alert("looking here and there");
+          if (count > 3) {
+            stoptimeout();
+            alert("Looking here and there, please be on camera!");
+            setsus(false);
+            resumetimeout(detectYaw); // Resume timeout after alert
           }
           console.log(`Yaw Direction: ${yawDirection}`);
+        } else if (detections.length > 1) {
+          multiplecount++;
+          if (!sus && multiplecount > 4) {
+            stoptimeout();
+            setsus(true);
+            alert("Multiple faces detected!");
+            setsus(false);
+            multiplecount = 0;
+            resumetimeout(detectYaw); // Resume timeout after alert
+          }
+        } else {
+          nonecount++;
+          if (!sus && nonecount > 4) {
+            stoptimeout();
+            setsus(true);
+            alert("No face detected!");
+            setsus(false);
+            nonecount = 0;
+            resumetimeout(detectYaw); // Resume timeout after alert
+          }
         }
       }, 1000);
     };
 
     loadModels();
-    // loadPhoneDetectionModel();
     startVideo();
 
     // Cleanup function to clear intervals and stop video stream
     return () => {
-      if (yawInterval) {
-        clearInterval(yawInterval);
-      }
-      if (phoneDetectionInterval) {
-        clearInterval(phoneDetectionInterval);
-      }
+      stoptimeout();
       if (videoRef.current && videoRef.current.srcObject) {
         videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
       }
     };
   }, []);
-  useEffect(() => {
-    startPhoneDetection(model);
-  }, [model]);
+
   return (
-    <div>
-      <video
-        ref={videoRef}
-        style={{
-          width: "640px",
-          height: "480px",
-        }}
-      />
+    <div className="absolute  right-0 bottom-0">
+      <Draggable>
+        <video
+          ref={videoRef}
+          style={{
+            width: "40vw",
+            height: "40vh",
+            borderRadius: 10,
+            cursor: "move",
+          }}
+        />
+      </Draggable>
     </div>
   );
 };

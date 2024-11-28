@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ExamSubmission, MCQAnswer, DescriptiveAnswer, DomainSpecificAnswer, BehaviorAnalysis
+from .models import ExamSubmission, MCQAnswer, DescriptiveAnswer, DomainSpecificAnswer, BehaviorAnalysis,PlagarismAnalysis
 
 class MCQAnswerInline(admin.TabularInline):
     model = MCQAnswer
@@ -23,6 +23,11 @@ class BehaviorAnalysisInline(admin.StackedInline):
                       'special_key_count', 'typing_speed', 'backspace_count', 
                       'total_key_presses')
 
+class PlagiarismAnalysisInline(admin.StackedInline):
+    model = PlagarismAnalysis
+    extra = 0
+    readonly_fields = ('label', 'confidence', 'submission')
+    
 @admin.register(ExamSubmission)
 class ExamSubmissionAdmin(admin.ModelAdmin):
     list_display = ('id', 'user_email', 'domain', 'created_at', 'is_suspicious')
@@ -78,3 +83,9 @@ class BehaviorAnalysisAdmin(admin.ModelAdmin):
     
     def has_add_permission(self, request):
         return False  # Prevent manual creation
+    
+@admin.register(PlagarismAnalysis)
+class PlagarismAnalysisAdmin(admin.ModelAdmin):
+    list_display = ('label', 'confidence', 'submission')
+    
+    
