@@ -1,24 +1,24 @@
-import React, { useCallback, useRef, useState } from 'react';
-import Webcam from 'react-webcam';
+import React, { useCallback, useRef, useState } from "react";
+import Webcam from "react-webcam";
 
 const WebcamCapture = ({ onImageCapture }) => {
   const webcamRef = useRef(null);
-  const [isCaptured, setIsCaptured] = useState(false);
+  const [capturedImage, setCapturedImage] = useState(null);  // Store captured image here
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     onImageCapture(imageSrc);
-    setIsCaptured(true);
+    setCapturedImage(imageSrc);  // Save the captured image to state
   }, [webcamRef, onImageCapture]);
 
   const retake = () => {
+    setCapturedImage(null);  // Reset the captured image
     onImageCapture(null);
-    setIsCaptured(false);
   };
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {!isCaptured ? (
+      {!capturedImage ? (
         <>
           <Webcam
             audio={false}
@@ -36,7 +36,7 @@ const WebcamCapture = ({ onImageCapture }) => {
       ) : (
         <div className="flex flex-col items-center gap-4">
           <img
-            src={webcamRef.current.getScreenshot()}
+            src={capturedImage}  // Use the captured image from state
             alt="captured"
             className="rounded-lg"
           />

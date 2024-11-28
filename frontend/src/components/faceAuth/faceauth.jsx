@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 
-const FaceAuthSystem = ({ examName, referenceImage }) => {
+const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
   const webcamRef = useRef(null);
   const [status, setStatus] = useState("Awaiting Input...");
   // if (!referenceImage) {
@@ -23,26 +23,38 @@ const FaceAuthSystem = ({ examName, referenceImage }) => {
     setStatus("Processing...");
     const video = webcamRef.current.video;
     const referenceImg = await faceapi.fetchImage(referenceImage);
-
+    console.log(referenceImage);
     // Detect face descriptors
-    const [referenceDescriptor] = await faceapi
-      .detectSingleFace(referenceImg)
-      .withFaceLandmarks()
-      .withFaceDescriptor();
+    try {
+      const referenceDescriptor = await faceapi
+        .detectSingleFace(referenceImg)
+        .withFaceLandmarks()
+        .withFaceDescriptor();
 
-    const inputDescriptor = await faceapi
-      .detectSingleFace(video)
-      .withFaceLandmarks()
-      .withFaceDescriptor();
-
-    if (referenceDescriptor && inputDescriptor) {
-      const distance = faceapi.euclideanDistance(
-        referenceDescriptor.descriptor,
-        inputDescriptor.descriptor
-      );
-      setStatus(distance < 0.6 ? "Face Matched" : "Face Not Matched");
-    } else {
-      setStatus("Face Detection Failed");
+      const inputDescriptor = await faceapi
+        .detectSingleFace(video)
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+      if (referenceDescriptor && inputDescriptor) {
+        const distance = faceapi.euclideanDistance(
+          referenceDescriptor.descriptor,
+          inputDescriptor.descriptor
+        );
+        console.log(distance);
+        if (distance < 0.5) {
+          setStatus(distance < 0.5 ? "Face Matched" : "Face Not Matched");
+          setAuth(distance < 0.5 ? true : false);
+        } else {
+          setStatus(distance < 0.5 ? "Face Matched" : "Face Not Matched");
+          setAuth(distance < 0.5 ? true : false);
+          alert("face not matched")
+        }
+      } else {
+        setStatus("Face Detection Failed");
+        alert("face Doesnt Match");
+      }
+    } catch (err) {
+      throw err;
     }
   };
 
