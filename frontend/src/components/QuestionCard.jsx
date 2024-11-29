@@ -99,6 +99,7 @@ const QuestionCard = ({ domain }) => {
   };
 
   // If domain not selected, show domain selection screen
+  
   if (!selectedDomain) {
     return (
       <div className={styles.container}>
