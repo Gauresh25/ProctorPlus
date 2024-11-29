@@ -1,0 +1,13 @@
+{
+  "name": "proctorplus",
+  "version": "1.0.0",
+  "description": "an ai proctored skill assessment and evaluation system",
+  "main": "-",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "download": "start cmd /k \"cd frontend && npm install && npm run dev\" && start cmd /k \"cd proctorplus && pip install -r requirements.txt && python manage.py runserver\"",
+    "start": "start cmd /k \"cd frontend && npm run dev\"   && start cmd /k \"cd  proctorplus   &&python manage.py runserver \"    "
+  },
+  "author": "",
+  "license": "ISC"
+}

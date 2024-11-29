@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-#root {
+/* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-}
+} 
 
 .logo {
   height: 6em;
@@ -43,4 +43,197 @@
 
 .read-the-docs {
   color: #888;
+} */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8feff;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+/* Navbar styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 4rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.nav-links a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.auth-buttons button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.login {
+  background-color: transparent;
+  color: #333;
+}
+
+.signup {
+  background-color: #4fd1c5;
+  color: white;
+}
+
+/* Main content styles */
+.main-content {
+  padding: 2rem 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Text content styles */
+.text-content {
+  flex: 1;
+  text-align: left;
+  padding-right: 2rem;
+}
+
+.text-content h1 {
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.text-content p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.hero-buttons button {
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.learn-more {
+  background-color: transparent;
+  border: 2px solid #4fd1c5;
+  color: #4fd1c5;
+}
+
+.learn-more:hover {
+  background-color: #4fd1c5;
+  color: white;
+}
+
+.take-test {
+  background-color: #4fd1c5;
+  border: none;
+  color: white;
+}
+
+.take-test:hover {
+  background-color: #3bb3a7;
+}
+
+/* Image content styles */
+.image-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+}
+
+/* Footer styles */
+.footer {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 2rem;
+}
+
+.footer h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.footer p {
+  color: #666;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .content-wrapper {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .text-content {
+    padding-right: 0;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .text-content h1 {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem 2rem;
+  }
+
+  .main-content {
+    padding: 1rem 2rem;
+  }
+
+  .text-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-image {
+    max-width: 100%;
+  }
 }

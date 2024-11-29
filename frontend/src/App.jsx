@@ -10,28 +10,62 @@ import ExamInterface from "./pages/ExamInterface";
 import TestPage from "./pages/TestPage";
 import Admin from "./pages/Admin";
 import AudioMCQMonitor from "./components/speech/speechrecog";
+import img from "./assets/react.svg";
+import "./app.css"
+function HomePage() {
+  return (
+    <div className="app">
+      <header className="navbar">
+        <div className="logo">ProctorPlus</div>
+        <nav className="nav-links">
+          <a href="#tests">Our tests</a>
+          <a href="#certification">Domains</a>
+          <a href="#languages">About Us</a>
+          <a href="#languages">Contact Us</a>
+        </nav>
+        <div className="auth-buttons">
+          <a href="/auth">
+            <button className="login">Log in</button>
+          </a>
+          <button className="signup">Sign up</button>
+        </div>
+      </header>
+
+      <main className="main-content">
+        <div className="content-wrapper">
+          <div className="text-content">
+            <h1>Prove skills, ace tests, and thrive in freelancing!</h1>
+            <p>
+              You can take the test wherever you are at your convenience and get
+              the results immediately.
+            </p>
+            <div className="hero-buttons">
+              <button className="learn-more">Learn more</button>
+              <button className="take-test">Take a test</button>
+            </div>
+          </div>
+
+          <div className="image-content">
+            <img src={img} alt="Student Learning" className="hero-image" />
+          </div>
+        </div>
+
+        <footer className="footer">
+          <h2>Best way to start freelancing</h2>
+          <p>At ProctorPlus, we use the best and newest methods</p>
+        </footer>
+      </main>
+    </div>
+  );
+}
+
 const App = () => {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-gray-50">
         <BrowserRouter>
           <Routes>
-            <Route
-              path="/"
-              element={
-                <div className="min-h-screen flex flex-col items-center justify-center">
-                  <h1 className="text-3xl font-bold mb-4">
-                    Welcome to Exam Portal
-                  </h1>
-                  <a
-                    href="/auth"
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                  >
-                    Login / Register
-                  </a>
-                </div>
-              }
-            />
+            <Route path="/" element={<HomePage />} />
             <Route path="/auth" element={<AuthenticationPage />} />
             <Route path="/face" element={<PhoneDetectionWithDrag />} />
             <Route path="/dashboard/*" element={<Dashoard />} />
@@ -42,28 +76,29 @@ const App = () => {
 
             <Route path="/exam" element={<ExamInterface />} />
 
-            <Route path="/exam-terminated"
+            <Route
+              path="/exam-terminated"
               element={
                 <div className="min-h-screen flex flex-col items-center justify-center bg-red-50">
-                <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
-                  <h1 className="text-3xl font-bold text-red-600 mb-4">Exam Terminated</h1>
-                  <p className="text-gray-700 mb-6">
-                    Your exam has been terminated due to multiple violations of exam integrity rules.
-                  </p>
-                  <div className="space-y-4">
-                    <a href="/">
-                    <button 
-                      
-                      className="w-full px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                      Return to Home
-                    </button>
-                    </a>
+                  <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
+                    <h1 className="text-3xl font-bold text-red-600 mb-4">
+                      Exam Terminated
+                    </h1>
+                    <p className="text-gray-700 mb-6">
+                      Your exam has been terminated due to multiple violations
+                      of exam integrity rules.
+                    </p>
+                    <div className="space-y-4">
+                      <a href="/">
+                        <button className="w-full px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                          Return to Home
+                        </button>
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
               }
-              />
+            />
           </Routes>
         </BrowserRouter>
       </div>

@@ -5,8 +5,8 @@ import KeystrokeAnalytics from "./KeystrokeAnalytics";
 import FaceYawDetection from "./faceapi";
 import styles from "../styles/Ques.module.css";
 import ExamEnvironment from "./ExamEnvironment";
-
 import { examData, EXAM_CONFIG, getQuestionCount } from "../data/examData";
+import withAudioMonitoring from "./speech/speechrecog";
 
 const QuestionCard = ({ domain }) => {
   const navigate = useNavigate();
@@ -149,121 +149,141 @@ const QuestionCard = ({ domain }) => {
   return (
     <div className={styles.container}>
       <ExamEnvironment>
-      <KeystrokeAnalytics ref={analyticsRef} />
-      <FaceYawDetection />
+        <KeystrokeAnalytics ref={analyticsRef} />
+        <FaceYawDetection />
 
-      <header className={styles.header}>
-        <h1 className={styles.title}>
-          Online Test -{" "}
-          {selectedDomain.charAt(0).toUpperCase() + selectedDomain.slice(1)}
-        </h1>
-        <div className={styles.timer}>
-          Time Left: {String(timeLeft.hours).padStart(2, "0")}:
-          {String(timeLeft.minutes).padStart(2, "0")}:
-          {String(timeLeft.seconds).padStart(2, "0")}
-        </div>
-      </header>
-
-      <main className={styles.mainContent}>
-        <section className={styles.questionSection}>
-          <h2 className={styles.questionHeader}>
-          Question {currentQuestionIndex + 1}/
-          {getQuestionCount(currentSection)}
-          </h2>
-
-          {currentSection === "mcqs" ? (
-            <>
-              <p className={styles.questionText}>{currentQuestion.question}</p>
-              <div className={styles.answerForm}>
-                {currentQuestion.options.map((option, index) => (
-                  <label key={index} className={styles.answerOption}>
-                    <input
-                      type="radio"
-                      name={currentQuestion.id}
-                      value={option}
-                      checked={answers.mcqs[currentQuestion.id] === option}
-                      onChange={() =>
-                        setAnswers((prev) => ({
-                          ...prev,
-                          mcqs: { ...prev.mcqs, [currentQuestion.id]: option },
-                        }))
-                      }
-                    />
-                    {option}
-                  </label>
-                ))}
-              </div>
-            </>
-          ) : (
-            <>
-              <p className={styles.questionText}>{currentQuestion.question}</p>
-              <textarea
-                className={styles.textArea}
-                value={answers.descriptive[currentQuestion.id] || ""}
-                onChange={(e) =>
-                  setAnswers((prev) => ({
-                    ...prev,
-                    descriptive: {
-                      ...prev.descriptive,
-                      [currentQuestion.id]: e.target.value,
-                    },
-                  }))
-                }
-                placeholder="Write your answer here..."
-              />
-            </>
-          )}
-
-          <div className={styles.navigationButtons}>
-            <button
-              className={styles.navButton}
-              onClick={() => {
-                if (currentQuestionIndex > 0) {
-                  setCurrentQuestionIndex(prev => prev - 1);
-                } else if (currentSection === "descriptive") {
-                  setCurrentSection("mcqs");
-                  setCurrentQuestionIndex(EXAM_CONFIG.mcqCount - 1);
-                }
-              }}
-            >
-              Previous
-            </button>
-            <button
-              className={styles.navButton}
-              onClick={() => {
-                if (currentSection === "mcqs" && currentQuestionIndex < EXAM_CONFIG.mcqCount - 1) {
-                  setCurrentQuestionIndex(prev => prev + 1);
-                } else if (currentSection === "mcqs" && currentQuestionIndex === EXAM_CONFIG.mcqCount - 1) {
-                  setCurrentSection("descriptive");
-                  setCurrentQuestionIndex(0);
-                } else if (currentSection === "descriptive" && currentQuestionIndex < EXAM_CONFIG.descriptiveCount - 1) {
-                  setCurrentQuestionIndex(prev => prev + 1);
-                } else {
-                  handleSubmit();
-                }
-              }}
-            >
-              {currentSection === "descriptive" && currentQuestionIndex === 1
-                ? "Submit"
-                : "Next"}
-            </button>
+        <header className={styles.header}>
+          <h1 className={styles.title}>
+            Online Test -{" "}
+            {selectedDomain.charAt(0).toUpperCase() + selectedDomain.slice(1)}
+          </h1>
+          <div className={styles.timer}>
+            Time Left: {String(timeLeft.hours).padStart(2, "0")}:
+            {String(timeLeft.minutes).padStart(2, "0")}:
+            {String(timeLeft.seconds).padStart(2, "0")}
           </div>
-        </section>
+        </header>
 
-        <aside className={styles.questionStatus}>
-          <h3>Questions</h3>
-          <div className={styles.questionGrid}>{renderQuestionButtons()}</div>
-        </aside>
-      </main>
+        <main className={styles.mainContent}>
+          <section className={styles.questionSection}>
+            <h2 className={styles.questionHeader}>
+              Question {currentQuestionIndex + 1}/
+              {getQuestionCount(currentSection)}
+            </h2>
 
-      <footer className={styles.footer}>
-        <button className={styles.submitButton} onClick={handleSubmit}>
-          Submit Test
-        </button>
-      </footer>
+            {currentSection === "mcqs" ? (
+              <>
+                <p className={styles.questionText}>
+                  {currentQuestion.question}
+                </p>
+                <div className={styles.answerForm}>
+                  {currentQuestion.options.map((option, index) => (
+                    <label key={index} className={styles.answerOption}>
+                      <input
+                        type="radio"
+                        name={currentQuestion.id}
+                        value={option}
+                        checked={answers.mcqs[currentQuestion.id] === option}
+                        onChange={() =>
+                          setAnswers((prev) => ({
+                            ...prev,
+                            mcqs: {
+                              ...prev.mcqs,
+                              [currentQuestion.id]: option,
+                            },
+                          }))
+                        }
+                      />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <p className={styles.questionText}>
+                  {currentQuestion.question}
+                </p>
+                <textarea
+                  className={styles.textArea}
+                  value={answers.descriptive[currentQuestion.id] || ""}
+                  onChange={(e) =>
+                    setAnswers((prev) => ({
+                      ...prev,
+                      descriptive: {
+                        ...prev.descriptive,
+                        [currentQuestion.id]: e.target.value,
+                      },
+                    }))
+                  }
+                  placeholder="Write your answer here..."
+                />
+              </>
+            )}
+
+            <div className={styles.navigationButtons}>
+              <button
+                className={styles.navButton}
+                onClick={() => {
+                  if (currentQuestionIndex > 0) {
+                    setCurrentQuestionIndex((prev) => prev - 1);
+                  } else if (currentSection === "descriptive") {
+                    setCurrentSection("mcqs");
+                    setCurrentQuestionIndex(EXAM_CONFIG.mcqCount - 1);
+                  }
+                }}
+              >
+                Previous
+              </button>
+              <button
+                className={styles.navButton}
+                onClick={() => {
+                  if (
+                    currentSection === "mcqs" &&
+                    currentQuestionIndex < EXAM_CONFIG.mcqCount - 1
+                  ) {
+                    setCurrentQuestionIndex((prev) => prev + 1);
+                  } else if (
+                    currentSection === "mcqs" &&
+                    currentQuestionIndex === EXAM_CONFIG.mcqCount - 1
+                  ) {
+                    setCurrentSection("descriptive");
+                    setCurrentQuestionIndex(0);
+                  } else if (
+                    currentSection === "descriptive" &&
+                    currentQuestionIndex < EXAM_CONFIG.descriptiveCount - 1
+                  ) {
+                    setCurrentQuestionIndex((prev) => prev + 1);
+                  } else {
+                    handleSubmit();
+                  }
+                }}
+              >
+                {currentSection === "descriptive" && currentQuestionIndex === 1
+                  ? "Submit"
+                  : "Next"}
+              </button>
+            </div>
+          </section>
+
+          <aside className={styles.questionStatus}>
+            <h3>Questions</h3>
+            <div className={styles.questionGrid}>{renderQuestionButtons()}</div>
+          </aside>
+        </main>
+
+        <footer className={styles.footer}>
+          <button className={styles.submitButton} onClick={handleSubmit}>
+            Submit Test
+          </button>
+        </footer>
       </ExamEnvironment>
     </div>
   );
 };
 
-export default QuestionCard;
+export default withAudioMonitoring(QuestionCard, {
+  warningThreshold: 3,
+  maxViolations: 3,
+  keywordMatchTimeout: 10000,
+});
