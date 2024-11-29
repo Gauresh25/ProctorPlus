@@ -23,7 +23,8 @@ const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
   if (loading) {
     return <div>loading</div>;
   }
-  // Match faces
+  //// Match faces
+  //
   const handleMatchFaces = async () => {
     setStatus("Processing...");
     const video = webcamRef.current.video;
