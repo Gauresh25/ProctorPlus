@@ -16,6 +16,7 @@ function HomePage() {
   return (
     <div className="app">
       <header className="navbar">
+        <img src="/Logo.png" alt="" className="h-15 w-auto object-contain logo" />
         <div className="logo">ProctorPlus</div>
         <nav className="nav-links">
           <a href="#tests">Our tests</a>
@@ -41,7 +42,7 @@ function HomePage() {
             </p>
             <div className="hero-buttons">
               <button className="learn-more">Learn more</button>
-              <button className="take-test">Take a test</button>
+              <a href="/exam"><button className="take-test">Take a test</button></a>
             </div>
           </div>
 

@@ -1,5 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  MonitorUp, 
+  Keyboard, 
+  Copy, 
+  MousePointerClick, 
+  AlertTriangle ,
+  Eye 
+} from 'lucide-react';
 
 const Modal = ({ message, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -125,13 +133,73 @@ const ExamEnvironment = ({ children }) => {
 
   if (!examStarted) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <button 
-          onClick={startExam}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Start Exam
-        </button>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-lg p-8 space-y-8">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold text-gray-800">Before You Begin</h1>
+            <p className="text-gray-600">Please review the exam requirements below</p>
+          </div>
+  
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+              <MonitorUp className="text-blue-500 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold">Fullscreen Required</h3>
+                <p className="text-sm text-gray-600">Exam must be taken in fullscreen mode</p>
+              </div>
+            </div>
+  
+            <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+              <Eye className="text-blue-500 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold">Camera Monitoring</h3>
+                <p className="text-sm text-gray-600">Face must be visible throughout exam</p>
+              </div>
+            </div>
+  
+            <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+              <MousePointerClick className="text-blue-500 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold">No Tab Switching</h3>
+                <p className="text-sm text-gray-600">Stay on this tab throughout the exam</p>
+              </div>
+            </div>
+  
+            <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+              <Keyboard className="text-blue-500 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold">Keystroke Monitoring</h3>
+                <p className="text-sm text-gray-600">All keystrokes are monitored</p>
+              </div>
+            </div>
+  
+            <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+              <Copy className="text-blue-500 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold">No Copy-Paste</h3>
+                <p className="text-sm text-gray-600">Copy-paste functionality is disabled</p>
+              </div>
+            </div>
+  
+            <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+              <AlertTriangle className="text-blue-500 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold">Audio Proctored Environment</h3>
+                <p className="text-sm text-gray-600">All activities are monitored, Including ur speech</p>
+              </div>
+            </div>
+          </div>
+  
+          <div className="text-center space-y-4">
+            <p className="text-sm text-gray-500">By clicking Start Exam, you agree to these conditions</p>
+            <button
+              onClick={startExam}
+              className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold"
+            >
+              Start Exam
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
