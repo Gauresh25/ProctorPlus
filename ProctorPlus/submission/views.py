@@ -66,27 +66,44 @@ def submit_exam(request):
         # Handle domain-specific answers
         domain_specific = answers.get('domainSpecific', {})
         if domain_specific:
-            if submission.domain == 'coding':
-                DomainSpecificAnswer.objects.create(
-                    submission=submission,
-                    code=domain_specific.get('code', ''),
-                    language=domain_specific.get('language', 'javascript'),
-                    question_id=f'{submission.domain}-dsa-1'
-                )
-            elif submission.domain == 'design':
-                DomainSpecificAnswer.objects.create(
-                    submission=submission,
-                    design_file_url="placeholder_url",
-                    design_description=domain_specific.get('description', ''),
-                    question_id=f'{submission.domain}-design-1'
-                )
-            elif submission.domain == 'marketing':
-                DomainSpecificAnswer.objects.create(
-                    submission=submission,
-                    video_file_url="placeholder_url",
-                    video_description=domain_specific.get('description', ''),
-                    question_id=f'{submission.domain}-marketing-1'
-                )
+            # Debug log
+            print(f"Processing domain specific answer: {domain_specific}")
+            
+            # Create domain-specific answer
+            domain_answer = DomainSpecificAnswer.objects.create(
+                submission=submission,
+                question_id=domain_specific.get('questionId'),
+                
+                # Coding specific fields
+                code=domain_specific.get('code'),
+                language=domain_specific.get('language'),
+                
+                # Design specific fields
+                design_description=domain_specific.get('design_description'),
+                
+                # Marketing specific fields
+                video_description=domain_specific.get('video_description'),
+            )
+            '''
+            # Handle file uploads if present
+            if request.FILES:
+                if 'designFile' in request.FILES and submission.domain == 'design':
+                    # Handle design file upload and update URL
+                    file = request.FILES['designFile']
+                    # Add your file handling logic here
+                    domain_answer.design_file_url = "url_to_file"  # Update with actual URL
+                    
+                elif 'videoFile' in request.FILES and submission.domain == 'marketing':
+                    # Handle video file upload and update URL
+                    file = request.FILES['videoFile']
+                    # Add your file handling logic here
+                    domain_answer.video_file_url = "url_to_file"  # Update with actual URL
+                    
+                domain_answer.save()
+            '''
+            
+            print(f"Created domain specific answer: {domain_answer.id}")
+
         
         # Save behavior analysis - updated to match your structure
         behavior_data = exam_data.get('behaviorAnalysis', {})
@@ -219,6 +236,7 @@ def get_submission_detail(request, submission_id):
             'domain_specific_answer',
             'Plagarism_Analysis'
         ).get(id=submission_id)
+
         
         # Build detailed response
         response_data = {
@@ -262,10 +280,24 @@ def get_submission_detail(request, submission_id):
             response_data['domain_specific'] = {
                 'question_id': domain_answer.question_id,
                 'score': domain_answer.score,
-                'code': domain_answer.code,
-                'design_file_url': domain_answer.design_file_url,
-                'video_file_url': domain_answer.video_file_url,
             }
+            
+            # Add domain-specific fields based on submission domain
+            if sub.domain == 'coding':
+                response_data['domain_specific'].update({
+                    'code': domain_answer.code,
+                    'language': domain_answer.language
+                })
+            elif sub.domain == 'design':
+                response_data['domain_specific'].update({
+                    'design_file_url': domain_answer.design_file_url,
+                    'design_description': domain_answer.design_description
+                })
+            elif sub.domain == 'marketing':
+                response_data['domain_specific'].update({
+                    'video_file_url': domain_answer.video_file_url,
+                    'video_description': domain_answer.video_description
+                })
             
         # Add behavior analysis if exists
         if hasattr(sub, 'behavior_analysis'):

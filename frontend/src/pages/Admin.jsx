@@ -189,6 +189,66 @@ const AdminDashboard = () => {
               </div>
             </div>
           )}
+          {/* Domain Specific Section */}
+          {selectedSubmission.domain_specific && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-2">Domain Specific Task</h3>
+              <div className="bg-gray-50 p-4 rounded">
+                <div className="mb-4">
+                  <p className="font-medium">Question {selectedSubmission.domain_specific.question_id}</p>
+                  <div className="flex items-center mt-2">
+                    <div className="h-2 w-full bg-gray-200 rounded">
+                      <div 
+                        className="h-2 bg-blue-500 rounded"
+                        style={{ width: `${(selectedSubmission.domain_specific.score / 20) * 100}%` }}
+                      ></div>
+                    </div>
+                    <span className="ml-2 text-sm font-medium">{selectedSubmission.domain_specific.score}/20</span>
+                  </div>
+                </div>
+
+                {selectedSubmission.domain === 'coding' && (
+                  <div className="mt-4">
+                    <p className="text-gray-600 mb-2">Code Submission</p>
+                    <div className="bg-gray-800 text-white p-4 rounded font-mono text-sm whitespace-pre-wrap">
+                      {selectedSubmission.domain_specific.code}
+                    </div>
+                    <p className="text-sm text-gray-500 mt-2">Language: {selectedSubmission.domain_specific.language}</p>
+                  </div>
+                )}
+
+                {selectedSubmission.domain === 'design' && (
+                  <div className="mt-4">
+                    <p className="text-gray-600 mb-2">Design Submission</p>
+                    <p className="text-sm mb-2">{selectedSubmission.domain_specific.design_description}</p>
+                    <a 
+                      href={selectedSubmission.domain_specific.design_file_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:text-blue-600"
+                    >
+                      View Design File →
+                    </a>
+                  </div>
+                )}
+
+                {selectedSubmission.domain === 'marketing' && (
+                  <div className="mt-4">
+                    <p className="text-gray-600 mb-2">Marketing Submission</p>
+                    <p className="text-sm mb-2">{selectedSubmission.domain_specific.video_description}</p>
+                    <a 
+                      href={selectedSubmission.domain_specific.video_file_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:text-blue-600"
+                    >
+                      View Video Pitch →
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Plagiarism Analysis */}
           {selectedSubmission.plagiarism?.length > 0 && (

@@ -44,7 +44,7 @@ const withAudioMonitoring = (WrappedComponent, options = {}) => {
           }
           return newCount;
         }
-        setModalMessage(`Speaking detected during exam. Warning ${newCount}/${maxViolations}`);
+        setModalMessage(`Topic related keywords detected in ur speech,Do not speak during exam. Warning ${newCount}/${maxViolations}`);
         return newCount;
       });
     };
@@ -73,7 +73,7 @@ const withAudioMonitoring = (WrappedComponent, options = {}) => {
           .toLowerCase();
 
         // Check for exam-related keywords
-        const keywords = ['answer', 'question', 'option', 'correct', 'wrong', 'solution'];
+        const keywords = ['answer', 'question', 'option', 'correct', 'wrong', 'solution','python','complexity','binary','search','queue','stack'];
         const hasKeywords = keywords.some(keyword => transcript.includes(keyword));
 
         if (hasKeywords) {
