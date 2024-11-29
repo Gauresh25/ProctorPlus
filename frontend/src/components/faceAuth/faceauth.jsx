@@ -5,6 +5,7 @@ import * as faceapi from "face-api.js";
 const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
   const webcamRef = useRef(null);
   const [status, setStatus] = useState("Awaiting Input...");
+  const [loading, setLoading] = useState(true);
   // if (!referenceImage) {
   //   return;
   // }
@@ -15,10 +16,15 @@ const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
       await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
       await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
     };
+    setLoading(true);
     loadModels();
+    setLoading(false);
   }, []);
-
-  // Match faces
+  if (loading) {
+    return <div>loading</div>;
+  }
+  //// Match faces
+  //
   const handleMatchFaces = async () => {
     setStatus("Processing...");
     const video = webcamRef.current.video;
@@ -47,7 +53,7 @@ const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
         } else {
           setStatus(distance < 0.5 ? "Face Matched" : "Face Not Matched");
           setAuth(distance < 0.5 ? true : false);
-          alert("face not matched")
+          alert("face not matched");
         }
       } else {
         setStatus("Face Detection Failed");

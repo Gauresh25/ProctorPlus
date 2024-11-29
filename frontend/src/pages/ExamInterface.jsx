@@ -3,6 +3,7 @@ import QuestionCard from "../components/QuestionCard";
 import { useParams } from "react-router-dom";
 import Faceauth from "../Components/faceAuth/faceauth";
 import { useAuth } from "../context/AuthContext";
+//
 
 function ExamInterface() {
   const { id } = useParams();
@@ -10,10 +11,10 @@ function ExamInterface() {
   const [User, setUser] = useState({});
   const [auth, setAuth] = useState(false);
   const [image, setImage] = useState("");
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     console.log(image);
   }, [image]);
-
   useEffect(() => {
     async function fetchData() {
       const token = localStorage.getItem("authToken");
@@ -30,10 +31,19 @@ function ExamInterface() {
       console.log(image);
     }
     fetchData();
+    setLoading(false);
   }, []);
-
+  if (loading) {
+    return <>Loading</>;
+  }
   return (
-    <div>{!auth ? <Faceauth referenceImage={image} setAuth={setAuth}/> : <QuestionCard />}</div>
+    <div>
+      {!auth ? (
+        <Faceauth referenceImage={image} setAuth={setAuth} />
+      ) : (
+        <QuestionCard />
+      )}
+    </div>
   );
 }
 
