@@ -1,6 +1,7 @@
 /venv
 ProctorPlus/venv
 __pycache__/
+.env
 *.pyc
 *.typed
 *.typed
