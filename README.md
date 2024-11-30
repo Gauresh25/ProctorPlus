@@ -6,6 +6,8 @@ A comprehensive online examination system with advanced proctoring capabilities,
 - [Key Features](#-key-features)
 - [Technical Stack](#%EF%B8%8F-technical-stack)
 - [AI Proctoring System Components](#-ai-proctoring-system-components)
+- [Project Implementation Screenshots](#-project-implementation)
+- [Project Demonstration video](#project-demo)
 - [Project Structure](#-project-structure)
 - [Setup Guide](#-setup-guide)
 - [Available Scripts](#-available-scripts)
@@ -225,6 +227,11 @@ Detailed view including evaluated mcq, descriptive answers at a glance, domain s
 
 ### Django admin panel
 ![Django admin panel](DjangoAdmin.png)
+
+## Project demo:
+
+[![Video Title](https://img.youtube.com/vi/Xh1uH7qQoi8&t=7s/0.jpg)](https://www.youtube.com/watch?v=Xh1uH7qQoi8&t=7s)
+
 
 ## 📁 Project Structure
 ```
