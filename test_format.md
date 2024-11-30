@@ -22,9 +22,8 @@ mcq_question = {
 # Flow:
 1. Student sees question and multiple options
 2. Selects one option
-3. System immediately validates against correct_option
-4. Stores response and score
-5. Shows explanation after submission
+3. System validates against correct_option in backend
+
 ```
 
 2. **Coding Questions Flow**:
@@ -47,10 +46,8 @@ coding_question = {
 # Flow:
 1. Student sees problem statement and initial code
 2. Can write/edit code in browser-based IDE
-3. Can run code against sample test cases
-4. System evaluates submission against all test cases
+3. System evaluates submission against all test cases
 5. Checks for time/memory limits
-6. Provides feedback on failed test cases
 ```
 
 3. **Marketing Questions Flow**:
@@ -106,6 +103,6 @@ POST /api/exam-sessions/{session_id}/questions/{question_id}/submit
 
 ```python
 - MCQ: Simple correct/incorrect check
-- Coding: Containerized test runner (e.g., Docker)
+- Coding: Containerized test runner 
 - Marketing: Teacher dashboard with rubric scoring
 ```
