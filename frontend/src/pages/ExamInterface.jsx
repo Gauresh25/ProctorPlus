@@ -12,6 +12,7 @@ function ExamInterface() {
   const [auth, setAuth] = useState(false);
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [domain, setDomain] = useState(id);
   useEffect(() => {
     console.log(image);
   }, [image]);
@@ -30,6 +31,7 @@ function ExamInterface() {
       console.log(userData);
       console.log(image);
     }
+    setDomain(id);
     fetchData();
     setLoading(false);
   }, []);
@@ -41,7 +43,7 @@ function ExamInterface() {
       {!auth ? (
         <Faceauth referenceImage={image} setAuth={setAuth} />
       ) : (
-        <QuestionCard />
+        <QuestionCard domain={domain} />
       )}
     </div>
   );

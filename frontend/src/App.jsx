@@ -1,8 +1,8 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 // import AuthenticationPage from "./pages/AuthenticationPage";
-import Authenticationpage from "./components/login";
+// import Authenticationpage from "./components/login";
 import AuthenticationPage from "./pages/AuthenticationPage";
 import PhoneDetectionWithDrag from "./components/faceapi";
 import Dashoard from "./pages/Dashoard";
@@ -10,16 +10,18 @@ import ExamInterface from "./pages/ExamInterface";
 import TestPage from "./pages/TestPage";
 import Admin from "./pages/Admin";
 import AudioMCQMonitor from "./components/speech/speechrecog";
-import img from "./assets/react.svg";
-import "./app.css"
+import img from "./assets/ss.png";
+import "./app.css";
+import SkillTests from "./Components/skillTest";
 function HomePage() {
   return (
     <div className="app">
       <header className="navbar">
-        <img src="/Logo.png" alt="" className="h-15 w-auto object-contain logo" />
-        <div className="logo">ProctorPlus</div>
+        <Link to="/" className="logo">
+          ProctorPlus
+        </Link>
         <nav className="nav-links">
-          <a href="#tests">Our tests</a>
+          <Link to="/test">Our tests</Link>
           <a href="#certification">Domains</a>
           <a href="#languages">About Us</a>
           <a href="#languages">Contact Us</a>
@@ -42,7 +44,7 @@ function HomePage() {
             </p>
             <div className="hero-buttons">
               <button className="learn-more">Learn more</button>
-              <a href="/exam"><button className="take-test">Take a test</button></a>
+              <button className="take-test">Take a test</button>
             </div>
           </div>
 
@@ -70,11 +72,11 @@ const App = () => {
             <Route path="/auth" element={<AuthenticationPage />} />
             <Route path="/face" element={<PhoneDetectionWithDrag />} />
             <Route path="/dashboard/*" element={<Dashoard />} />
-            <Route path="/test" element={<TestPage />} />
+            {/* <Route path="/test" element={<TestPage />} /> */}
             <Route path="/speech" element={<AudioMCQMonitor />} />
             <Route path="/exam/:id" element={<ExamInterface />} />
             <Route path="/reports" element={<Admin />} />
-
+            <Route path="/test" element={<SkillTests />} />
             <Route path="/exam" element={<ExamInterface />} />
 
             <Route
