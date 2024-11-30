@@ -179,66 +179,6 @@ const AdminDashboard = () => {
               </div>
             ))}
           </div>
-
-          {/* Behavior Analysis */}
-          {selectedSubmission.behavior_analysis && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Behavior Analysis</h3>
-              <div className="bg-gray-50 p-4 rounded">
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-gray-600">Bot Detection</p>
-                    <p
-                      className={`font-medium ${
-                        selectedSubmission.behavior_analysis.is_likely_bot
-                          ? "text-red-600"
-                          : "text-green-600"
-                      }`}
-                    >
-                      {selectedSubmission.behavior_analysis.is_likely_bot
-                        ? "Suspicious Activity"
-                        : "Normal Activity"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Confidence</p>
-                    <p className="font-medium">
-                      {selectedSubmission.behavior_analysis.confidence.toFixed(
-                        2
-                      ) * 100}
-                      %
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Key Presses</p>
-                    <p className="font-medium">
-                      {selectedSubmission.behavior_analysis.total_key_presses}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Backspaces</p>
-                    <p className="font-medium">
-                      {selectedSubmission.behavior_analysis.backspace_count}
-                    </p>
-                  </div>
-                </div>
-                {selectedSubmission.behavior_analysis.reasons?.length > 0 && (
-                  <div>
-                    <p className="text-gray-600 mb-2">Detection Reasons:</p>
-                    <ul className="list-disc pl-5">
-                      {selectedSubmission.behavior_analysis.reasons.map(
-                        (reason, index) => (
-                          <li key={index} className="text-sm text-gray-700">
-                            {reason}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
           {/* Domain Specific Section */}
           {selectedSubmission.domain_specific && (
             <div className="mb-6">
@@ -300,6 +240,67 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {/* Behavior Analysis */}
+          {selectedSubmission.behavior_analysis && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-2">Behavior Analysis</h3>
+              <div className="bg-gray-50 p-4 rounded">
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-gray-600">Bot Detection</p>
+                    <p
+                      className={`font-medium ${
+                        selectedSubmission.behavior_analysis.is_likely_bot
+                          ? "text-red-600"
+                          : "text-green-600"
+                      }`}
+                    >
+                      {selectedSubmission.behavior_analysis.is_likely_bot
+                        ? "Suspicious Activity"
+                        : "Normal Activity"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Confidence</p>
+                    <p className="font-medium">
+                      {selectedSubmission.behavior_analysis.confidence.toFixed(
+                        2
+                      ) * 100}
+                      %
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Key Presses</p>
+                    <p className="font-medium">
+                      {selectedSubmission.behavior_analysis.total_key_presses}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Backspaces</p>
+                    <p className="font-medium">
+                      {selectedSubmission.behavior_analysis.backspace_count}
+                    </p>
+                  </div>
+                </div>
+                {selectedSubmission.behavior_analysis.reasons?.length > 0 && (
+                  <div>
+                    <p className="text-gray-600 mb-2">Detection Reasons:</p>
+                    <ul className="list-disc pl-5">
+                      {selectedSubmission.behavior_analysis.reasons.map(
+                        (reason, index) => (
+                          <li key={index} className="text-sm text-gray-700">
+                            {reason}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+
           {/* Plagiarism Analysis */}
           {selectedSubmission.plagiarism?.length > 0 && (
             <div className="mb-6">
@@ -319,7 +320,7 @@ const AdminDashboard = () => {
                               ? "bg-red-500"
                               : "bg-yellow-500"
                           }`}
-                          style={{ width: `${plag.confidence}%` }}
+                          style={{ width: `${plag.confidence* 100}%` }}
                         ></div>
                       </div>
                       <span className="ml-2 text-sm font-medium">

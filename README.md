@@ -1,9 +1,159 @@
-# ProctorPlus
+# 🎓 ProctorPlus
 
-A web application built with Django REST Framework and React+Vite.
+A comprehensive online examination system with advanced proctoring capabilities, domain-specific assessments, and robust authentication mechanisms.
 
-## Project Structure
+## 📑 Table of Contents
+- [Key Features](#-key-features)
+- [Technical Stack](#%EF%B8%8F-technical-stack)
+- [AI Proctoring System Components](#-ai-proctoring-system-components)
+- [Project Structure](#-project-structure)
+- [Setup Guide](#-setup-guide)
+- [Available Scripts](#-available-scripts)
+- [Development](#-development)
+- [Additional Documentation](#-additional-documentation)
 
+## 🌟 Key Features
+
+### 📚 Multi-Domain Assessment System
+
+Our assessment platform implements a versatile multi-domain system designed to evaluate candidates across different specializations. The system has been architected to handle three distinct domains while maintaining flexibility for future expansions.
+
+#### Question Types
+
+1. **Multiple Choice Questions (MCQs)**
+   - Advanced randomization and time-tracking features
+   - Categorized by difficulty level and topic
+   - Prevents backward navigation
+   - Question-specific time limits
+
+2. **Descriptive Answers**
+   - Rich text editor with auto-save functionality
+   - Markdown formatting support
+   - Response length and writing time tracking
+   - Content preservation features
+
+3. **Domain-Specific Challenges**
+   - Technical candidates: Live coding exercises
+   - Design candidates: Portfolio submissions with process documentation
+   - Marketing candidates: Video presentations of campaign strategies
+
+### 🔐 Advanced Biometric Authentication
+
+1. **Face Registration Process**
+   - Multiple facial angle capture
+   - Different lighting condition support
+   - Reliable reference profile creation
+
+2. **Pre-exam Verification**
+   - Thorough identity verification
+   - Advanced facial recognition algorithms
+   - Real-time profile matching
+
+3. **Continuous Monitoring**
+   - Periodic face matching
+   - Session security maintenance
+   - Prevention of candidate substitution
+
+### 👀 Comprehensive Proctoring System
+
+#### Visual Monitoring
+- Face presence and position tracking
+- Suspicious movement detection
+- Multiple person detection
+- Screen focus monitoring
+
+#### Environment Control
+- Fullscreen mode enforcement
+- Browser tab switching prevention
+- Multiple window detection
+- Copy-paste restriction
+
+#### Keystroke Analytics
+- Timestamp recording for keypresses
+- Typing rhythm pattern analysis
+- Speed variation monitoring
+- Special key combination tracking
+- Backspace pattern analysis
+- Automation detection
+- Pattern change monitoring
+
+#### Mouse Movement Analytics
+- Continuous position tracking
+- Movement trajectory analysis
+- Click pattern monitoring
+- Automated movement detection
+
+#### Audio Monitoring
+- Voice activity detection
+- Keyword monitoring
+- Background noise analysis
+- Communication attempt detection
+
+### 📊 Analytics and Reporting
+
+#### Submission Analysis
+- Response pattern tracking
+- Performance metrics
+- Skill evaluations
+- Score distribution analysis
+
+#### Behavioral Analysis
+- Question timing metrics
+- Navigation pattern tracking
+- Interaction analysis
+- Suspicious activity monitoring
+
+#### Integrity Verification
+- Plagiarism detection
+- Content similarity analysis
+- Source matching
+- Activity logging
+
+## 🛠️ Technical Stack
+
+### Frontend
+- React.js
+- Context API for state management
+- Face-api.js for face recognition
+- React Webcam for video capture
+
+### Backend
+- Django
+- Django REST Framework
+- SimpleJWT for authentication
+- PostgreSQL database
+
+## 🤖 AI Proctoring System Components
+
+### 1. Biometric Authentication System
+
+#### Architecture
+- FaceAPI.js with SSD MobileNet v1
+- Real-time face detection
+- CNN-based neural network
+
+#### Technical Components
+- Face Detection (SSD)
+- Face Recognition (128-dimensional embeddings)
+- Performance Metrics
+
+### 2. Behavioral Analysis System
+
+#### Core Components
+- Keystroke Dynamics Analysis
+- Mouse Movement Analysis
+- Pattern Recognition
+- Key Metrics Analysis
+
+### 3. Audio Monitoring System
+
+#### Speech Recognition Architecture
+- Web Speech API
+- NLP Pipeline
+- Real-time processing
+- Pattern Recognition
+
+## 📁 Project Structure
 ```
 project/
 ├── frontend/           # React + Vite frontend
@@ -16,16 +166,16 @@ project/
     └── ...
 ```
 
-## Prerequisites
+## 🚀 Setup Guide
 
+### Prerequisites
 - Python 3.8+
 - Node.js 14+
 - npm or yarn
 
-## Backend Setup
+### Backend Setup
 
 1. Create and activate virtual environment:
-
 ```bash
 cd ProctorPlus
 python -m venv venv
@@ -36,75 +186,60 @@ source venv/bin/activate
 ```
 
 2. Install dependencies:
-
 ```bash
 pip install -r requirements.txt
 ```
 
 3. Set up environment variables:
-
-   - Add env variables to `.env` for both frontend and/or backend
-   - Update the values if needed
+   - Add env variables to `.env` for both frontend and backend
+   - Update the values
 
 4. Run migrations:
-
 ```bash
 python manage.py migrate
 ```
 
 5. Start the development server:
-
 ```bash
 python manage.py runserver
 ```
 
-## Frontend Setup
+### Frontend Setup
 
 1. Install dependencies:
-
 ```bash
 cd frontend
 npm install
 ```
 
 2. Set up environment variables:
-
-   - Add env variables to `.env` for both frontend and/or backend
-   - Update the values if needed
+   - Add env variables to `.env`
+   - Update values if needed
 
 3. Start the development server:
-
 ```bash
 npm run dev
 ```
 
-## Available Scripts
+## 📜 Available Scripts
 
-Backend:
-
+### Backend
 - `python manage.py runserver` - Starts Django development server
 - `python manage.py migrate` - Run database migrations
 - `python manage.py createsuperuser` - Create admin user
 
-Frontend:
-
+### Frontend
 - `npm run dev` - Starts Vite development server
 - `npm run build` - Builds the frontend for production
 - `npm run lint` - Runs ESLint
 - `npm run preview` - Preview production build locally
 
-## Development
-
+## 💻 Development
 - Backend API runs on `http://localhost:8000`
 - Frontend development server runs on `http://localhost:5173`
 - Admin interface available at `http://localhost:8000/admin`
 
-## Database
-
-The project uses Postgres hosted on supabase
-
-## Additional Documentation
-
+## 📚 Additional Documentation
 - [Django Documentation](https://docs.djangoproject.com/)
 - [Django REST Framework](https://www.django-rest-framework.org/)
 - [React Documentation](https://react.dev/)
