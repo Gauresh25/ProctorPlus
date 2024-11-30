@@ -230,8 +230,7 @@ Detailed view including evaluated mcq, descriptive answers at a glance, domain s
 
 ## Project demo:
 
-[![Video Title](https://img.youtube.com/vi/Xh1uH7qQoi8&t=7s/0.jpg)](https://www.youtube.com/watch?v=Xh1uH7qQoi8&t=7s)
-
+[![Video Title](image.png)](https://www.youtube.com/watch?v=Xh1uH7qQoi8)
 
 ## 📁 Project Structure
 ```
@@ -318,6 +317,13 @@ npm run dev
 - Backend API runs on `http://localhost:8000`
 - Frontend development server runs on `http://localhost:5173`
 - Admin interface available at `http://localhost:8000/admin`
+
+## For documentation of specific api used in django restful architecture refer to these files:
+- [Authentication](auth_guide.md)
+- [Answer submission](Submission.md)
+- [Behaviorial Analysis](keystrokeAnalysis.md)
+- [Question format](test format.md)
+
 
 ## 📚 Additional Documentation
 - [Django Documentation](https://docs.djangoproject.com/)
