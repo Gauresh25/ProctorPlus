@@ -8,36 +8,6 @@ The KeystrokeAnalytics component is a behavior monitoring system designed to det
 
 Place the `KeystrokeAnalytics.jsx` component in your project's components directory.
 
-## Basic Usage
-
-```jsx
-import { useRef } from "react";
-import KeystrokeAnalytics from "./components/KeystrokeAnalytics";
-
-function ExamForm() {
-  const analyticsRef = useRef();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const behaviorAnalysis = analyticsRef.current.getCurrentAnalysis();
-
-    // Include analysis with your form submission
-    const submissionData = {
-      // ... your form data
-      behaviorAnalysis,
-    };
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <textarea name="answer" />
-      <KeystrokeAnalytics ref={analyticsRef} sensitivity={0.5} />
-      <button type="submit">Submit</button>
-    </form>
-  );
-}
-```
-
 ## Props
 
 - `sensitivity` (optional): Number between 0 and 1 controlling detection threshold (default: 0.5)
@@ -136,15 +106,3 @@ async function submitForm(formData, analysis) {
 - Uses event listeners efficiently
 - Clean up handled automatically
 - Memory usage scales with session length
-
-## Example Backend Validation
-
-```python
-def validate_submission(data):
-    analysis = data.get('behaviorAnalysis')
-    if analysis['risk'] > 0.8:
-        flag_for_review(data)
-    if analysis['patterns']:
-        log_suspicious_patterns(analysis['patterns'])
-    return is_valid_submission(data)
-```
