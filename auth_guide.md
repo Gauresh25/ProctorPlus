@@ -60,4 +60,3 @@ GET /api/auth/me (Protected)
 3. Access user data: `auth.user` via context
 4. Logout: `auth.logout()` function
 
-This system replaces Clerk with a simpler, more controllable authentication flow while maintaining security and user experience.
