@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -44,6 +45,28 @@
 .read-the-docs {
   color: #888;
 } */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "Nunito", sans-serif;
+}
+
+.intro-title {
+  opacity: 0;
+}
+
+input::placeholder {
+  color: #9ca3af;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1f2937;
+  -webkit-box-shadow: 0 0 0px 1000px white inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
 
 * {
   margin: 0;

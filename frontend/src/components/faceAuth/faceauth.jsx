@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
@@ -5,10 +6,7 @@ import * as faceapi from "face-api.js";
 const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
   const webcamRef = useRef(null);
   const [status, setStatus] = useState("Awaiting Input...");
-  const [loading, setLoading] = useState(true);
-  // if (!referenceImage) {
-  //   return;
-  // }
+
   // Load models on component mount
   useEffect(() => {
     const loadModels = async () => {
@@ -16,22 +14,17 @@ const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
       await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
       await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
     };
-    setLoading(true);
     loadModels();
-    setLoading(false);
   }, []);
-  if (loading) {
-    return <div>loading</div>;
-  }
-  //// Match faces
-  //
+
+  // Match faces
   const handleMatchFaces = async () => {
     setStatus("Processing...");
     const video = webcamRef.current.video;
     const referenceImg = await faceapi.fetchImage(referenceImage);
-    console.log(referenceImage);
-    // Detect face descriptors
+
     try {
+      // Detect face descriptors
       const referenceDescriptor = await faceapi
         .detectSingleFace(referenceImg)
         .withFaceLandmarks()
@@ -41,26 +34,27 @@ const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
         .detectSingleFace(video)
         .withFaceLandmarks()
         .withFaceDescriptor();
+
       if (referenceDescriptor && inputDescriptor) {
         const distance = faceapi.euclideanDistance(
           referenceDescriptor.descriptor,
           inputDescriptor.descriptor
         );
-        console.log(distance);
         if (distance < 0.5) {
-          setStatus(distance < 0.5 ? "Face Matched" : "Face Not Matched");
-          setAuth(distance < 0.5 ? true : false);
+          setStatus("Face Matched");
+          setAuth(true);
         } else {
-          setStatus(distance < 0.5 ? "Face Matched" : "Face Not Matched");
-          setAuth(distance < 0.5 ? true : false);
-          alert("face not matched");
+          setStatus("Face Not Matched");
+          setAuth(false);
+          alert("Face not matched");
         }
       } else {
         setStatus("Face Detection Failed");
-        alert("face Doesnt Match");
+        alert("Face doesn't match");
       }
     } catch (err) {
-      throw err;
+      setStatus("Error in face detection");
+      console.error(err);
     }
   };
 
@@ -82,22 +76,25 @@ const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
       {/* Right Section - Instructions */}
       <div style={styles.rightSection}>
         <h2 style={styles.examName}>{examName}</h2>
-        <h3>Instructions:</h3>
-        <ul style={styles.instructions}>
-          <li>Make sure you do not move the camera at all.</li>
-          <li>
-            Ensure proper lighting for the camera to capture your face clearly.
-          </li>
-          <li>Sit straight and face the camera directly.</li>
-          <li>Maintain a neutral expression during the process.</li>
-          <li>Do not look away or cover your face during verification.</li>
-        </ul>
+        <div style={styles.instructionsContainer}>
+          <h3 style={styles.instructionsHeading}>Instructions:</h3>
+          <ul style={styles.instructions}>
+            <li>Make sure you do not move the camera at all.</li>
+            <li>
+              Ensure proper lighting for the camera to capture your face
+              clearly.
+            </li>
+            <li>Sit straight and face the camera directly.</li>
+            <li>Maintain a neutral expression during the process.</li>
+            <li>Do not look away or cover your face during verification.</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
 };
 
-// Inline styles
+// Updated Inline Styles
 const styles = {
   container: {
     display: "flex",
@@ -105,6 +102,7 @@ const styles = {
     height: "100vh",
     padding: "20px",
     boxSizing: "border-box",
+    backgroundColor: "#f9f9f9",
   },
   leftSection: {
     flex: "1",
@@ -112,53 +110,81 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    height: "70vh",
-    width: "45vw",
-    background: "#f9f9f9",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    height: "80vh",
+    backgroundColor: "#FFFFFF",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
     padding: "20px",
+    marginRight: "20px",
   },
   webcam: {
     width: "100%",
-    height: "100%",
+    height: "75%",
     borderRadius: "8px",
+    objectFit: "cover",
+    backgroundColor: "#000", // For black placeholder effect
   },
   button: {
     marginTop: "20px",
-    padding: "10px 20px",
+    padding: "12px 24px",
     fontSize: "16px",
-    backgroundColor: "#4CAF50",
-    color: "white",
+    backgroundColor: "#4FD1C5", // Teal button color
+    color: "#FFFFFF",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "6px",
     cursor: "pointer",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+    transition: "background-color 0.3s ease",
   },
   status: {
     marginTop: "10px",
-    fontSize: "18px",
-    fontWeight: "bold",
+    fontSize: "16px",
+    fontWeight: "500",
     color: "#333",
   },
   rightSection: {
     flex: "1",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "80vh",
+    background: "linear-gradient(135deg, #4FD1C5, #3BB9A3)",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
     padding: "20px",
-    height: "70vh",
-    backgroundColor: "#fff",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-    marginLeft: "20px",
+  },
+  instructionsContainer: {
+    width: "90%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: "10px",
+    padding: "20px",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
   },
   examName: {
     fontSize: "24px",
     fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: "20px",
+    textAlign: "center",
+  },
+  instructionsHeading: {
+    fontSize: "20px",
+    fontWeight: "bold",
+    color: "#4FD1C5",
     marginBottom: "10px",
   },
   instructions: {
     fontSize: "16px",
     color: "#555",
     lineHeight: "1.8",
+    paddingLeft: "20px",
+    margin: "0",
+    listStyleType: "disc",
+    listStylePosition: "inside",
   },
 };
 
+
 export default FaceAuthSystem;
+
