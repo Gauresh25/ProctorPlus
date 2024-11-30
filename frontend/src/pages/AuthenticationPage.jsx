@@ -30,7 +30,7 @@ const AuthenticationPage = () => {
             />
           </div>
           <h2 className="intro-title text-3xl font-bold text-white mb-4">
-            WelcoProctorPlus
+            Welcome to ProctorPlus
           </h2>
           <p className="text-white/90">
             Get you skills assessed and start freenlancing now!

@@ -152,7 +152,76 @@ Our assessment platform implements a versatile multi-domain system designed to e
 - NLP Pipeline
 - Real-time processing
 - Pattern Recognition
+[Previous sections remain the same...]
 
+### 4. AI Content Detection System
+- RoBERTa-base OpenAI detector model
+- Real-time content analysis pipeline
+- Neural transformer-based classification
+- Token-level analysis
+- Confidence scoring system
+
+## 📁 Project Implementation
+Registration with compulsory face registration
+![alt text](Registration.png)
+
+Login for registered users:
+![alt text](login.png)
+
+landing page -entry point to the website
+![alt text](landingPage.png)
+
+Test catalogue - view all available tests
+![alt text](Testcatalogue.png)
+
+### Test environment
+
+Mandatory face validation, matching with registered image
+![alt text](FaceValidation.png)
+
+Exam instructions:
+![alt text](Instructions.png)
+
+MCQ interface:
+![alt text](ExamInterface.png)
+
+Descriptive question section:
+![alt text](descriptivequestion.png)
+
+Coding section:
+![alt text](<Coding area.png>)
+
+Design specific question:
+![alt text](DesignSec.png)
+
+Marketing specific section:
+![alt text](Marketing_type.png)
+
+Successful submission of exam:
+![alt text](Completion.png)
+
+### Violations
+
+Exiting fullscreen:
+![alt text](fullsccr.png)
+
+Examinee looking away warning:
+![alt text](lookaway.png)
+
+Keywords heard on examinee mic:
+![alt text](keyword.png)
+
+Exam termination if number of violation exceeded:
+![alt text](Termination.png)
+
+### Reports
+
+Reports page:
+![alt text](Reports_page.png)
+
+Detailed view including evaluated mcq, descriptive answers at a glance, domain specific submission, Behavioral analysis and plagiarism/AI generated content check[only accessible for users with staff access]
+![alt text](detail_1.png)
+![alt text](detail_2.png)
 ## 📁 Project Structure
 ```
 project/
