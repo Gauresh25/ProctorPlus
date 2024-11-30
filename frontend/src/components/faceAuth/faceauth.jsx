@@ -3,9 +3,31 @@ import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 
+const Modal = ({ message, onClose, type = "error" }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+      <h3 className={`text-lg font-semibold ${type === "success" ? "text-green-600" : "text-red-600"} mb-4`}>
+        {type === "success" ? "Success" : "Warning"}
+      </h3>
+      <p className="text-gray-700 mb-6">{message}</p>
+      <button
+        onClick={onClose}
+        className={`w-full ${
+          type === "success" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"
+        } text-white py-2 px-4 rounded transition-colors`}
+      >
+        {type === "success" ? "Continue" : "Try Again"}
+      </button>
+    </div>
+  </div>
+);
+
 const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
   const webcamRef = useRef(null);
   const [status, setStatus] = useState("Awaiting Input...");
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalType, setModalType] = useState("error");
 
   // Load models on component mount
   useEffect(() => {
@@ -16,6 +38,13 @@ const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
     };
     loadModels();
   }, []);
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    if (modalType === "success") {
+      setAuth(true);
+    }
+  };
 
   // Match faces
   const handleMatchFaces = async () => {
@@ -35,31 +64,47 @@ const FaceAuthSystem = ({ examName, referenceImage, setAuth }) => {
         .withFaceLandmarks()
         .withFaceDescriptor();
 
-      if (referenceDescriptor && inputDescriptor) {
-        const distance = faceapi.euclideanDistance(
-          referenceDescriptor.descriptor,
-          inputDescriptor.descriptor
-        );
-        if (distance < 0.5) {
-          setStatus("Face Matched");
-          setAuth(true);
+        if (referenceDescriptor && inputDescriptor) {
+          const distance = faceapi.euclideanDistance(
+            referenceDescriptor.descriptor,
+            inputDescriptor.descriptor
+          );
+          
+          if (distance < 0.5) {
+            setStatus("Face Matched");
+            setModalType("success");
+            setModalMessage("Face verification successful! You will now be redirected to the exam.");
+            setShowModal(true);
+          } else {
+            setStatus("Face Not Matched");
+            setModalType("error");
+            setModalMessage("Face verification failed. Please ensure proper lighting and positioning.");
+            setShowModal(true);
+          }
         } else {
-          setStatus("Face Not Matched");
-          setAuth(false);
-          alert("Face not matched");
+          setStatus("Face Detection Failed");
+          setModalType("error");
+          setModalMessage("Unable to detect face. Please ensure your face is clearly visible.");
+          setShowModal(true);
         }
-      } else {
-        setStatus("Face Detection Failed");
-        alert("Face doesn't match");
+      } catch (err) {
+        setStatus("Error in face detection");
+        setModalType("error");
+        setModalMessage("An error occurred during face detection. Please try again.");
+        setShowModal(true);
+        console.error(err);
       }
-    } catch (err) {
-      setStatus("Error in face detection");
-      console.error(err);
-    }
   };
 
   return (
     <div style={styles.container}>
+      {showModal && (
+        <Modal
+          message={modalMessage}
+          onClose={handleModalClose}
+          type={modalType}
+        />
+      )}
       {/* Left Section - Webcam */}
       <div style={styles.leftSection}>
         <Webcam

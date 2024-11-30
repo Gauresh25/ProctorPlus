@@ -18,7 +18,7 @@ const Modal = ({ message, onClose }) => (
 const withAudioMonitoring = (WrappedComponent, options = {}) => {
   const {
     warningThreshold = 3,
-    maxViolations = 3,
+    maxViolations = 5,
     keywordMatchTimeout = 10000
   } = options;
 

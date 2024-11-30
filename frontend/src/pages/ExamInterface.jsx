@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import QuestionCard from "../components/QuestionCard";
 import { useParams } from "react-router-dom";
-import Faceauth from "../Components/faceAuth/faceauth";
+import Faceauth from "../components/faceAuth/faceauth";
 import { useAuth } from "../context/AuthContext";
 //
 

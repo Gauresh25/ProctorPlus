@@ -13,6 +13,8 @@ import AudioMCQMonitor from "./components/speech/speechrecog";
 import img from "./assets/ss.png";
 import "./app.css";
 import SkillTests from "./Components/skillTest";
+import { CheckCircle } from 'lucide-react';
+
 function HomePage() {
   return (
     <div className="app">
@@ -74,10 +76,47 @@ const App = () => {
             <Route path="/dashboard/*" element={<Dashoard />} />
             {/* <Route path="/test" element={<TestPage />} /> */}
             <Route path="/speech" element={<AudioMCQMonitor />} />
-            <Route path="/exam/:id" element={<ExamInterface />} />
+            <Route path="/exam/" element={<ExamInterface />} />
             <Route path="/reports" element={<Admin />} />
             <Route path="/test" element={<SkillTests />} />
+            <Route path="/dummy" element={<TestPage />} />
             <Route path="/exam" element={<ExamInterface />} />
+            <Route path="/exam-complete" element={
+              <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+                  <div className="flex justify-center mb-6">
+                    <CheckCircle className="h-16 w-16 text-green-500" />
+                  </div>
+                  
+                  <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                    Exam Completed Successfully!
+                  </h1>
+                  
+                  <p className="text-gray-600 mb-8">
+                    Thank you for completing the exam. Your responses have been recorded and are being evaluated.
+                  </p>
+
+                  <div className="space-y-4">
+                    <a href="/">
+                    <button
+                      onClick={() => navigate('//')}
+                      className="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors"
+                    >
+                      Return to Home
+                    </button>
+                    </a>
+                    
+                    
+                  </div>
+
+                  <p className="mt-6 text-sm text-gray-500">
+                    Your results will be available within 24 hours.
+                  </p>
+                </div>
+              </div>
+            }
+            />
+            
 
             <Route
               path="/exam-terminated"

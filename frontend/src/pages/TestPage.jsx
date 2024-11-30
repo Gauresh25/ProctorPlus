@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import KeystrokeAnalytics from "../components/KeystrokeAnalytics";
-import ExamEnvironment from "../components/ExamEnvironment";
 import withAudioMonitoring from "../components/speech/speechrecog";
 
 
@@ -46,7 +45,6 @@ const TestPage = ({ audioViolations }) => {
   };
 
   return (
-    <ExamEnvironment>
       <div className="p-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -79,7 +77,7 @@ const TestPage = ({ audioViolations }) => {
           </div>
         )}
       </div>
-    </ExamEnvironment>
+    
   );
 };
 

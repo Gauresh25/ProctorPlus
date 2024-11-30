@@ -33,7 +33,7 @@ const FaceYawDetection = () => {
   const [isModalAcknowledged, setIsModalAcknowledged] = useState(true);
   const [initial, setInitial] = useState(true);
   const navigate = useNavigate();
-  const maxViolations = 3;
+  const maxViolations = 7;
 
   const handleViolation = (message) => {
     setViolations((prev) => {
@@ -47,7 +47,7 @@ const FaceYawDetection = () => {
         return newCount;
       }
       setModalMessage(
-        `${message} detected during exam. Warning ${newCount}/${maxViolations}`
+        `${message} Warning ${newCount}/${maxViolations}`
       );
       setIsModalAcknowledged(false); // Prevent immediate re-trigger
       return newCount;
@@ -119,7 +119,7 @@ const FaceYawDetection = () => {
 
           if (count > 3) {
             stoptimeout();
-            handleViolation("looking here and there please look in the Camera");
+            handleViolation("Kindly refrain looking away from the exam screen");
 
             // setIsModalAcknowledged(false);
           }
@@ -135,7 +135,7 @@ const FaceYawDetection = () => {
           nonecount++;
           if (!sus && nonecount > 4) {
             stoptimeout();
-            handleViolation("NO FACE DETECTED PLEASE SIT IN FRONT OF CAMERA");
+            handleViolation("No face detected, try again");
             setsus(true);
             // setIsModalAcknowledged(false);
           }

@@ -3,49 +3,49 @@ import { Link } from "react-router-dom";
 const SkillTests = () => {
   const tests = [
     {
-      title: "Design-Test-1",
-      description: "Basic design test for assistant designer roles.",
-      domain: "design",
+      title: "UI/UX Design Fundamentals",
+      description: "Essential design principles and tools for aspiring UI/UX designers.",
+      domain: "design"
     },
     {
-      title: "Design-Test-2",
-      description: "Intermediate test for associate designers.",
-      domain: "design",
+      title: "Product Design & Prototyping",
+      description: "Create interactive prototypes and learn advanced design systems.",
+      domain: "design"  
     },
     {
-      title: "Design-Test-3",
-      description: "Advanced test for senior designers.",
-      domain: "design",
+      title: "Enterprise UX Architecture",
+      description: "Complex design challenges and enterprise-scale design systems.",
+      domain: "design"
     },
     {
-      title: "Marketing-Test-1",
-      description: "Beginner test for entry-level marketers.",
-      domain: "marketing",
+      title: "Digital Marketing Essentials",
+      description: "Master the foundations of modern digital marketing.",
+      domain: "marketing"
     },
     {
-      title: "Marketing-Test-2",
-      description: "Intermediate test for marketing associates.",
-      domain: "marketing",
+      title: "Growth Marketing & Analytics", 
+      description: "Data-driven marketing strategies and campaign optimization.",
+      domain: "marketing"
     },
     {
-      title: "Marketing-Test-3",
-      description: "Advanced test for senior marketers.",
-      domain: "marketing",
+      title: "Strategic Brand Marketing",
+      description: "Advanced brand strategy and integrated marketing campaigns.",
+      domain: "marketing"
     },
     {
-      title: "Technical-Test-1",
-      description: "Java test for junior developer roles.",
-      domain: "coding",
+      title: "Computer Science Foundations",
+      description: "Problem solving and computer science basics using Python.",
+      domain: "coding"
     },
     {
-      title: "Technical-Test-2",
-      description: "Machine learning test for associates.",
-      domain: "coding",
+      title: "Machine Learning Engineering",
+      description: "Build and deploy machine learning models at scale.",
+      domain: "coding"
     },
     {
-      title: "Technical-Test-3",
-      description: "Node.js test for backend developers.",
-      domain: "coding",
+      title: "Backend Engineering  with Node.js",
+      description: "Server-side development and API architecture using Node.js.",
+      domain: "coding"
     },
   ];
 
@@ -83,7 +83,7 @@ const SkillTests = () => {
                 <p className="mt-2 text-sm">{test.description}</p>
                 <div className="mt-4 flex justify-between">
                   <Link
-                    to={`/exam/${test.domain}`}
+                    to={`/exam`}
                     className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded shadow"
                   >
                     Start Test

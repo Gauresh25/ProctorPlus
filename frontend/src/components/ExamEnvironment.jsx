@@ -29,7 +29,7 @@ const ExamEnvironment = ({ children }) => {
   const [examStarted, setExamStarted] = useState(false);
   const [warnings, setWarnings] = useState(0);
   const [modalMessage, setModalMessage] = useState('');
-  const MAX_WARNINGS = 3;
+  const MAX_WARNINGS = 5;
   const warningTimeoutRef = useRef(null);
 
   const startExam = async () => {
