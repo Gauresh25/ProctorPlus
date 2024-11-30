@@ -109,5 +109,3 @@ POST /api/exam-sessions/{session_id}/questions/{question_id}/submit
 - Coding: Containerized test runner (e.g., Docker)
 - Marketing: Teacher dashboard with rubric scoring
 ```
-
-Would you like me to dive deeper into any of these aspects or help implement a specific component?

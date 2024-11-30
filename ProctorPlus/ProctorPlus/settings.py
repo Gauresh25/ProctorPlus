@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-00f95u5mbiesa=i(l*c(9-*x55%6)@lbxc+gv0%lkitkw&*ozy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -71,7 +71,7 @@ LOGOUT_REDIRECT_URL = '/admin/login/'
 ROOT_URLCONF = 'ProctorPlus.urls'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Vite dev server
+    "*",  # all
 ]
 CORS_ALLOWED_HEADERS = [
     'accept',
