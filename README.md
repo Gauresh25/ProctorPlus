@@ -163,65 +163,69 @@ Our assessment platform implements a versatile multi-domain system designed to e
 
 ## 📁 Project Implementation
 Registration with compulsory face registration
-![alt text](Registration.png)
+![Registration](Registration.png)
 
 Login for registered users:
-![alt text](login.png)
+![Login](login.png)
 
-landing page -entry point to the website
-![alt text](landingPage.png)
+Landing page -entry point to the website
+![Landing page](landingPage.png)
 
 Test catalogue - view all available tests
-![alt text](Testcatalogue.png)
+![Test catalogue](Testcatalogue.png)
 
 ### Test environment
 
 Mandatory face validation, matching with registered image
-![alt text](FaceValidation.png)
+![face validation](FaceValidation.png)
 
 Exam instructions:
-![alt text](Instructions.png)
+![instructions](Instructions.png)
 
 MCQ interface:
-![alt text](ExamInterface.png)
+![MCQ interface](ExamInterface.png)
 
 Descriptive question section:
-![alt text](descriptivequestion.png)
+![Descriptive question](descriptivequestion.png)
 
 Coding section:
-![alt text](<Coding area.png>)
+![Coding section](<Coding area.png>)
 
 Design specific question:
-![alt text](DesignSec.png)
+![Design specific question](DesignSec.png)
 
 Marketing specific section:
-![alt text](Marketing_type.png)
+![Marketing specific section](Marketing_type.png)
 
 Successful submission of exam:
-![alt text](Completion.png)
+![Successful](Completion.png)
 
 ### Violations
 
 Exiting fullscreen:
-![alt text](fullsccr.png)
+![Exiting fullscreen](fullsccr.png)
 
 Examinee looking away warning:
-![alt text](lookaway.png)
+![looking away warning](lookaway.png)
 
 Keywords heard on examinee mic:
-![alt text](keyword.png)
+![Keywords heard](keyword.png)
 
 Exam termination if number of violation exceeded:
-![alt text](Termination.png)
+![Exam termination](Termination.png)
 
 ### Reports
 
 Reports page:
-![alt text](Reports_page.png)
+![Reports page](Reports_page.png)
 
 Detailed view including evaluated mcq, descriptive answers at a glance, domain specific submission, Behavioral analysis and plagiarism/AI generated content check[only accessible for users with staff access]
-![alt text](detail_1.png)
-![alt text](detail_2.png)
+![Detailed view](detail_1.png)
+![Detailed view](detail_2.png)
+
+### Django admin panel
+![Django admin panel](DjangoAdmin.png)
+
 ## 📁 Project Structure
 ```
 project/
