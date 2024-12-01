@@ -70,9 +70,11 @@ LOGOUT_REDIRECT_URL = '/admin/login/'
 
 ROOT_URLCONF = 'ProctorPlus.urls'
 
-CORS_ALLOWED_ORIGINS = [
-    "*",  # all
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "*",  # all
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_HEADERS = [
     'accept',
     'accept-encoding',
