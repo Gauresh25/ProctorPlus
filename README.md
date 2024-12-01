@@ -2,6 +2,12 @@
 
 A comprehensive online examination system with advanced proctoring capabilities, domain-specific assessments, and robust authentication mechanisms.
 
+
+# Hosted at [ProctorPlus](http://35.200.148.90:5173/) ### google cloud compute instance(ubuntu + nginx)
+Since site hosted does not have ssl encryption you have to explicitly allow camera and mic access
+- for Chrome navigate to [this file](chrome://flags/#unsafely-treat-insecure-origin-as-secure)
+   set value to http://35.200.148.90:5173/
+
 ## 📑 Table of Contents
 - [Key Features](#-key-features)
 - [Technical Stack](#%EF%B8%8F-technical-stack)
@@ -164,12 +170,6 @@ Our assessment platform implements a versatile multi-domain system designed to e
 - Confidence scoring system
 
 ## 📁 Project Implementation
-
-### Hosted url
-[ProctorPlus](http://35.200.148.90:5173/)
-Since site hosted does not have ssl encryption you have to explicitly allow camera and mic access
-- for Chrome navigate to [this file](chrome://flags/#unsafely-treat-insecure-origin-as-secure)
-- - set value to http://35.200.148.90:5173/
 
 ### Screenshots
 Registration with compulsory face registration
