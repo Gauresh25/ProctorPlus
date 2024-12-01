@@ -6,7 +6,7 @@ A comprehensive online examination system with advanced proctoring capabilities,
 # Hosted at [ProctorPlus](http://35.200.148.90:5173/) 
 Hosted on Google cloud compute Virtual Machine (ubuntu + nginx)
 Since site hosted does not have ssl encryption you have to explicitly allow camera and mic access
-- for Chrome navigate to [this file](chrome://flags/#unsafely-treat-insecure-origin-as-secure)
+- for Chrome navigate to chrome://flags/#unsafely-treat-insecure-origin-as-secure
    set value to http://35.200.148.90:5173/
 
 ## 📑 Table of Contents
