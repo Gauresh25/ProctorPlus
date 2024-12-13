@@ -1,7 +1,7 @@
 import React from "react";
-import DefaultLayout from "../Components/DefaultLayout/defaultlayout";
+import DefaultLayout from "../components/DefaultLayout/defaultlayout";
 import { Route, Routes } from "react-router-dom";
-import Controll from "../Components/dashboard/controll";
+import Controll from "../components/dashboard/controll";
 
 function Dashboard() {
   return (

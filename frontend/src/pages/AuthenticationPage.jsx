@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { useAuth } from "../context/AuthContext";
-import Login from "../components/Login";
+import Login from "../components/login";
 
 import "../styles/login.css";
 import login_img from "../assets/login.png"

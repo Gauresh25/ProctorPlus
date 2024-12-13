@@ -25,7 +25,7 @@ const AdminDashboard = () => {
   const fetchSubmissions = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/api/submissions/analytics/",
+        "/api/submissions/analytics/",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -53,7 +53,7 @@ const AdminDashboard = () => {
   const fetchSubmissionDetail = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/submissions/${id}/`,
+        `/api/submissions/${id}/`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,

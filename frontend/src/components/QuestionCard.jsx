@@ -85,7 +85,7 @@ const QuestionCard = ({ domain }) => {
     formData.append("examData", JSON.stringify(submissionData));
   
     try {
-      const response = await fetch("http://localhost:8000/api/exam/submit/", {
+      const response = await fetch("/api/exam/submit/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,

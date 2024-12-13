@@ -19,7 +19,7 @@ function ExamInterface() {
   useEffect(() => {
     async function fetchData() {
       const token = localStorage.getItem("authToken");
-      const response = await fetch("http://localhost:8000/api/auth/me", {
+      const response = await fetch("/api/auth/me", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -27,7 +27,7 @@ function ExamInterface() {
       });
       const userData = await response.json();
       setUser(userData);
-      setImage("http://localhost:8000" + userData.data.user.profile_image);
+      setImage("http://35.200.148.90:8000" + userData.data.user.profile_image);
       console.log(userData);
       console.log(image);
     }

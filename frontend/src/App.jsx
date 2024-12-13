@@ -12,7 +12,7 @@ import Admin from "./pages/Admin";
 import AudioMCQMonitor from "./components/speech/speechrecog";
 import img from "./assets/ss.png";
 import "./app.css";
-import SkillTests from "./Components/skillTest";
+import SkillTests from "./components/skillTest";
 import { CheckCircle } from 'lucide-react';
 
 function HomePage() {
@@ -31,9 +31,10 @@ function HomePage() {
         <div className="auth-buttons">
           <a href="/auth">
             <button className="login">Log in</button>
-          </a>
+          
           <button className="signup">Sign up</button>
-        </div>
+		</a>        
+</div>
       </header>
 
       <main className="main-content">
